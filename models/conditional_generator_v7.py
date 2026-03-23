@@ -97,15 +97,15 @@ class ConditionalGeneratorV7(nn.Module):
     def _unpack_data_cond_gen(self, batch):
         ts = batch["ts"].to(self.device).float()
         tp = batch["tp"].to(self.device).float()
-        if "text" in self.cond_configs["cond_modal"]:
-            attrs = batch["cap"]
-        elif "constraint" in self.cond_configs["cond_modal"]:
-            attrs = batch["cap"]
-        elif self.cond_configs["cond_modal"] == "attr":
-            attrs = batch["attrs"].to(self.device).long()
+        # if "text" in self.cond_configs["cond_modal"]:
+        #     attrs = batch["cap"]
+        # elif "constraint" in self.cond_configs["cond_modal"]:
+        #     attrs = batch["cap"]
+        # elif self.cond_configs["cond_modal"] == "attr":
+        #     attrs = batch["attrs"].to(self.device).long()
         ts = ts.permute(0, 2, 1)
-        breakpoint()
-        return ts, tp, attrs
+
+        return ts, tp, batch["my_cap"]
 
     def generate(self, batch, n_samples, sampler="ddim"):
         if self.cond_configs["cond_modal"] == "constraint":
