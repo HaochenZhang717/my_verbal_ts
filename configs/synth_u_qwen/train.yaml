@@ -4,7 +4,7 @@ data:
   ts_path: /playpen-shared/haochenz/LitsDatasets/128_len_ts/synthetic_u
   caps_path: /playpen-shared/haochenz/LitsDatasets/128_len_caps_one_per_channel_0309/synth_u/
 #  text_embed_path: /playpen-shared/haochenz/LitsDatasets/128_len_caps_one_per_channel_0309/synth_u/
-  text_embed_path: /playpen-shared/haochenz/LitsDatasets/128_len_ts/synthetic_u/
+  text_embed_path: /playpen-shared/haochenz/LitsDatasets/128_len_ts/synthetic_u
   vae_embed_path: ../vae_embeddings/synth_u
   seq_len: 128
   num_channels: 1
