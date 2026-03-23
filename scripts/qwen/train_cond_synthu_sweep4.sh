@@ -37,6 +37,7 @@ export USE_CAUSAL=false
 
 
 export CFG_RATIO=0.1
+export SCHEDULER=cosine
 
 
 LR_LIST=(1e-3)
@@ -53,12 +54,12 @@ do
   do
     echo "Running lr=$LR bs=$BS"
 
-    export WANDB_NAME="qwen_v1_synth_u_cosine-lr${LR}_bs${BS}-L${LAYERS}C${CHANNELS}H${NHEADS}D${DIFFUSION_EMBEDDING_DIM}-dropout0.1-cfg0.1"
+    export WANDB_NAME="qwen_v1_caps_v2_synth_u_cosine-lr${LR}_bs${BS}-L${LAYERS}C${CHANNELS}H${NHEADS}D${DIFFUSION_EMBEDDING_DIM}-dropout0.1-cfg0.1"
 
     CUDA_VISIBLE_DEVICES=7 python run_qwen.py \
         --cond_modal text \
         --training_stage finetune \
-        --save_folder ./sweep/synth_u_qwen_v1/lr_${LR}_bs_${BS}-L${LAYERS}C${CHANNELS}H${NHEADS}D${DIFFUSION_EMBEDDING_DIM}-dropout0.1-cfg0.1 \
+        --save_folder ./sweep/synth_u_qwen_v1_caps_v2/lr_${LR}_bs_${BS}-L${LAYERS}C${CHANNELS}H${NHEADS}D${DIFFUSION_EMBEDDING_DIM}-dropout0.1-cfg0.1 \
         --model_diff_config_path configs/synth_u_qwen/diff/model_text2ts_dep.yaml \
         --model_cond_config_path configs/synth_u_qwen/cond/text_msmdiffmv.yaml \
         --train_config_path configs/synth_u_qwen/train.yaml \

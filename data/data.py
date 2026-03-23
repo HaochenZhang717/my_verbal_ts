@@ -177,15 +177,16 @@ class MySplit(Dataset):
             self.C = num_channels
 
         if not text_embed_path.endswith('.pt'):
-            self.text_embed = torch.load(f"{text_embed_path}/{split}_embeds.pt", map_location="cpu")
+            # self.text_embed = torch.load(f"{text_embed_path}/{split}_embeds.pt", map_location="cpu")
+            self.text_embed = torch.load(f"{text_embed_path}/{split}_embed_one_per_segment_0323.pt", map_location="cpu")
         else:
             self.text_embed = torch.load(text_embed_path, map_location="cpu")
 
 
         self.vae_embed = None
-        if vae_embed_path != "none":
-            self.vae_embed = np.load(f"{vae_embed_path}/{split}_vae.npy", allow_pickle=True)
-            self.vae_embed = torch.from_numpy(self.vae_embed)
+        # if vae_embed_path != "none":
+        #     self.vae_embed = np.load(f"{vae_embed_path}/{split}_vae.npy", allow_pickle=True)
+        #     self.vae_embed = torch.from_numpy(self.vae_embed)
 
 
         self.caps = None

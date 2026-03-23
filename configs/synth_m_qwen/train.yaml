@@ -1,7 +1,7 @@
 ### Dataset ###
 data:
   name: mine
-  ts_path: /playpen/haochenz/LitsDatasets/128_len_ts/synthetic_m
+  ts_path: /playpen-shared/haochenz/LitsDatasets/128_len_ts/synthetic_m
   caps_path: /playpen-shared/haochenz/LitsDatasets/128_len_caps_one_per_channel_0309/synth_m/
   text_embed_path: /playpen-shared/haochenz/LitsDatasets/128_len_caps_one_per_channel_0309/synth_m/
   vae_embed_path: ./vae_embeddings/synth_m
