@@ -82,16 +82,18 @@ class ConditionalGeneratorQwen(nn.Module):
             else:
                 raise NotImplementedError
 
-            cfg_uncond_ratio = float(os.getenv("CFG_RATIO", 0.0))
-            num_cond = int((1 - cfg_uncond_ratio) * B)
-            loss_cond = self.generator._noise_estimation_loss(x[:num_cond], tp[:num_cond], attr_embed[:num_cond], t[:num_cond])
-            loss_uncond = self.generator._noise_estimation_loss(x[num_cond:], tp[num_cond:], None, t[num_cond:])
-            loss = {}
-            for k in loss_cond.keys():
-                loss[k] = (
-                        (num_cond / B) * loss_cond[k] +
-                        (1 - num_cond / B) * loss_uncond[k]
-                )
+            loss = self.generator._noise_estimation_loss(x, tp, attr_embed, t)
+
+            # cfg_uncond_ratio = float(os.getenv("CFG_RATIO", 0.0))
+            # num_cond = int((1 - cfg_uncond_ratio) * B)
+            # loss_cond = self.generator._noise_estimation_loss(x[:num_cond], tp[:num_cond], attr_embed[:num_cond], t[:num_cond])
+            # loss_uncond = self.generator._noise_estimation_loss(x[num_cond:], tp[num_cond:], None, t[num_cond:])
+            # loss = {}
+            # for k in loss_cond.keys():
+            #     loss[k] = (
+            #             (num_cond / B) * loss_cond[k] +
+            #             (1 - num_cond / B) * loss_uncond[k]
+            #     )
             return loss
 
         loss_dict = {}
@@ -136,15 +138,11 @@ class ConditionalGeneratorQwen(nn.Module):
         ts, tp, text_embedding_all_segments, vae_embeds, moment_embeds = self._unpack_data_cond_gen(batch)
         B, C, T = ts.shape
 
-        guidance_scale = float(os.getenv("GUIDANCE_SCALE", 1.0))
-
         if self.cond_configs["cond_modal"] == "text":
             attr_embed_raw = text_embedding_all_segments
-            # print(attr_embed_raw.shape)
-            # breakpoint()
         elif self.cond_configs["cond_modal"] == "vae_embed":
-            attr_embed_raw = vae_embeds
-            # attr_embed_raw = moment_embeds
+            # attr_embed_raw = vae_embeds
+            attr_embed_raw = moment_embeds
         else:
             raise NotImplementedError
 
@@ -163,13 +161,7 @@ class ConditionalGeneratorQwen(nn.Module):
                 else:
                     raise NotImplementedError
 
-                pred_noise_cond, _ = self.generator.predict_noise(x, tp, attr_embed, t)
-                if guidance_scale == 1.0:
-                    pred_noise = pred_noise_cond
-                else:
-                    pred_noise_uncond, _ = self.generator.predict_noise(x, tp, None, t)
-                    pred_noise = pred_noise_uncond + guidance_scale * (pred_noise_cond - pred_noise_uncond)
-                # pred_noise, _ = self.generator.predict_noise(x, tp, attr_embed, t)
+                pred_noise, _ = self.generator.predict_noise(x, tp, attr_embed, t)
                 if sampler == "ddpm":
                     x = self.generator.ddpm.reverse(x, pred_noise, t, noise)
                 else:
@@ -177,3 +169,52 @@ class ConditionalGeneratorQwen(nn.Module):
 
             samples.append(x)
         return torch.stack(samples)
+
+
+    # @torch.no_grad()
+    # def generate_text(self, batch, n_samples, sampler="ddim"):
+    #
+    #     ts, tp, text_embedding_all_segments, vae_embeds, moment_embeds = self._unpack_data_cond_gen(batch)
+    #     B, C, T = ts.shape
+    #
+    #     guidance_scale = float(os.getenv("GUIDANCE_SCALE", 1.0))
+    #
+    #     if self.cond_configs["cond_modal"] == "text":
+    #         attr_embed_raw = text_embedding_all_segments
+    #         # print(attr_embed_raw.shape)
+    #         # breakpoint()
+    #     elif self.cond_configs["cond_modal"] == "vae_embed":
+    #         attr_embed_raw = vae_embeds
+    #         # attr_embed_raw = moment_embeds
+    #     else:
+    #         raise NotImplementedError
+    #
+    #     samples = []
+    #     for i in range(n_samples):
+    #         x = torch.randn_like(ts)
+    #
+    #         for t in range(self.generator.num_steps - 1, -1, -1):
+    #             noise = torch.randn_like(x)
+    #             t = (torch.ones(B, device=self.device) * t).long()
+    #
+    #             if self.cond_configs["cond_modal"] == "text":
+    #                 attr_embed = self.cond_projector(attr_embed_raw)  # for now we are not using projector.
+    #             elif self.cond_configs["cond_modal"] == "vae_embed":
+    #                 attr_embed = self.cond_projector(attr_embed_raw, t)
+    #             else:
+    #                 raise NotImplementedError
+    #
+    #             pred_noise_cond, _ = self.generator.predict_noise(x, tp, attr_embed, t)
+    #             if guidance_scale == 1.0:
+    #                 pred_noise = pred_noise_cond
+    #             else:
+    #                 pred_noise_uncond, _ = self.generator.predict_noise(x, tp, None, t)
+    #                 pred_noise = pred_noise_uncond + guidance_scale * (pred_noise_cond - pred_noise_uncond)
+    #             # pred_noise, _ = self.generator.predict_noise(x, tp, attr_embed, t)
+    #             if sampler == "ddpm":
+    #                 x = self.generator.ddpm.reverse(x, pred_noise, t, noise)
+    #             else:
+    #                 x = self.generator.ddim.reverse(x, pred_noise, t, noise, is_determin=True)
+    #
+    #         samples.append(x)
+    #     return torch.stack(samples)
