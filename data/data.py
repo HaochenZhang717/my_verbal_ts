@@ -553,7 +553,8 @@ class V7Split(Dataset):
                         item = json.loads(line)
                         caps_dict[item["id"]] = item["captions"]
                 self.my_caps = caps_dict
-
+        print(self.my_caps.keys())
+        breakpoint()
 
     def __getitem__(self, idx):
         cap_id = random.randint(0, len(self.caps[idx])-1)
