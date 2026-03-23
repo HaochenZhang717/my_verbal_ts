@@ -9,7 +9,7 @@ export USE_CAUSAL=false
 LR=5e-4
 BS=512
 
-CKPT_DIR="/playpen-shared/haochenz/sweep_text2ts_v6/synth_u/verbalts_v6/"
+CKPT_DIR="/playpen-shared/haochenz/sweep_text2ts_v6/synth_u/verbalts_v6/0/ckpts"
 SAVE_ROOT="/playpen-shared/haochenz/sweep_text2ts_v6/synth_u/verbalts_v6/0"
 
 
