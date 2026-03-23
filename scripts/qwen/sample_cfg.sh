@@ -2,8 +2,8 @@ export CUDA_VISIBLE_DEVICES=4
 export USE_CAUSAL=false
 export GUIDANCE_SCALE=2.0
 
-CKPT_DIR="/playpen/haochenz/VerbalTS_reimplement/sweep/synth_u_qwen_v1/lr_1e-3_bs_128-L10C128H8D128-dropout0.1-cfg0.1/0/ckpts"
-SAVE_ROOT="/playpen/haochenz/VerbalTS_reimplement/sweep/synth_u_qwen_v1/lr_1e-3_bs_128-L10C128H8D128-dropout0.1-cfg0.1"
+CKPT_DIR="/playpen/haochenz/oldsweep/synth_u_qwen_v1/lr_1e-3_bs_128-L10C128H8D128-dropout0.1-cfg0.1/0/ckpts"
+SAVE_ROOT="/playpen/haochenz/oldsweep/synth_u_qwen_v1/lr_1e-3_bs_128-L10C128H8D128-dropout0.1-cfg0.1"
 
 LAYERS=10
 CHANNELS=128
