@@ -554,7 +554,7 @@ class V7Split(Dataset):
                         caps_dict[item["id"]] = item["captions"]
                 self.my_caps = caps_dict
         # print(self.my_caps.keys())
-        breakpoint()
+        # breakpoint()
 
     def __getitem__(self, idx):
         cap_id = random.randint(0, len(self.caps[idx])-1)
@@ -571,3 +571,12 @@ class V7Split(Dataset):
 
     def __len__(self):
         return self.n_samples
+
+    @staticmethod
+    def collate_fn(batch):
+        out = {}
+        out["ts"] = torch.stack([b["ts"] for b in batch])
+        out["tp"] = torch.stack([b["tp"] for b in batch])
+        out["cap"] = [b["cap"] for b in batch]
+        out["my_caps"] = [b["my_cap"] for b in batch]
+        return out
