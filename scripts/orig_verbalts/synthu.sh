@@ -1,5 +1,7 @@
-LR_LIST=(5e-4)
+LR_LIST=(1e-3)
 BS_LIST=(512)
+
+export SCHEDULER=MULTISTEP
 
 for LR in "${LR_LIST[@]}"
 do
@@ -9,7 +11,7 @@ do
 
     export WANDB_NAME="synth_u_-lr${LR}_bs${BS}"
 
-    CUDA_VISIBLE_DEVICES=4 python run.py \
+    CUDA_VISIBLE_DEVICES=5 python run.py \
     --cond_modal text \
     --training_stage finetune \
     --save_folder ../sweep_text2ts/synth_u/orig_verbalts_my_cap_v1 \
@@ -22,7 +24,7 @@ do
     --multipatch_num 3 \
     --L_patch_len 2 \
     --base_patch 4 \
-    --epochs 2500 \
+    --epochs 700 \
     --batch_size ${BS} \
     --lr ${LR} \
     --clip_cache_path "" \
