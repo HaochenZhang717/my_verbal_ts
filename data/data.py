@@ -46,7 +46,7 @@ class CustomSplit(Dataset):
         # self.ts, self.attrs, self.caps = ts, attrs, caps
         self.ts, self.caps, self.embed_0323 = ts, caps, embed_0323
         # self.verbalts_qwen_embed = verbalts_qwen_embed
-
+        breakpoint()
         self.n_samples = self.ts.shape[0]
         self.n_steps = self.ts.shape[1]
         # self.n_attrs = self.attrs.shape[1]
@@ -58,7 +58,6 @@ class CustomSplit(Dataset):
         if len(tmp_ts.shape) == 1:
             tmp_ts = tmp_ts[...,np.newaxis]
 
-        breakpoint()
         return {"ts": tmp_ts,
                 "ts_len": tmp_ts.shape[0],
                 # "verbal_qwen": self.verbalts_qwen_embed[cap_id],
