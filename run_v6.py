@@ -52,7 +52,7 @@ def train(training_stage, train_configs, model_diff_configs, model_cond_configs,
 
 
 def evaluate(training_stage, eval_configs, model_diff_configs, model_cond_configs, output_folder):
-    eval_configs["eval"]["model_path"] = os.path.join(output_folder, "ckpts/model_best_loss.pth")
+    eval_configs["eval"]["model_path"] = os.path.join(output_folder, f"ckpts/{args.model_ckpt_name}.pth")
 
     dataset = GenerationDataset(eval_configs["data"])
 
@@ -100,13 +100,13 @@ def _evaluate_cond_gen(evaluator, sampler="ddim", n_sample=10):
 def run(training_stage, train_configs, eval_configs, model_diff_configs, model_cond_configs, output_folder, data_folder="", only_evaluate=False):
     if only_evaluate == False:
         train(training_stage, train_configs, model_diff_configs, model_cond_configs, eval_configs, output_folder)
-
-    # eval_configs["data"]["folder"] = data_folder
-    # df, samples = evaluate(training_stage, eval_configs, model_diff_configs, model_cond_configs, output_folder)
-    # path = os.path.join(output_folder, "results.csv")
-    # df.to_csv(path)
-    # torch.save(samples, os.path.join(output_folder, args.samples_name))
-    # return df
+    else:
+        eval_configs["data"]["folder"] = data_folder
+        df, samples = evaluate(training_stage, eval_configs, model_diff_configs, model_cond_configs, output_folder)
+        path = os.path.join(output_folder, "results.csv")
+        df.to_csv(path)
+        torch.save(samples, os.path.join(output_folder, args.samples_name))
+        # return df
 
 ##### Arguments #####
 parser = argparse.ArgumentParser(description="TSE")
@@ -139,6 +139,7 @@ parser.add_argument("--epochs", type=int, default=200)
 parser.add_argument("--guide_w", type=float, default=1.0)
 parser.add_argument("--only_evaluate", type=bool, default=False)
 parser.add_argument("--samples_name", type=str, required=True)
+parser.add_argument("--model_ckpt_name", type=str, required=True)
 
 args = parser.parse_args()
 
