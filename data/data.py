@@ -575,8 +575,8 @@ class V7Split(Dataset):
     @staticmethod
     def collate_fn(batch):
         out = {}
-        out["ts"] = torch.stack([b["ts"] for b in batch])
-        out["tp"] = torch.stack([b["tp"] for b in batch])
+        out["ts"] = torch.stack([torch.from_numpy(b["ts"]) for b in batch])
+        out["tp"] = torch.stack([torch.from_numpy(b["tp"]) for b in batch])
         out["cap"] = [b["cap"] for b in batch]
         out["my_caps"] = [b["my_cap"] for b in batch]
         return out
