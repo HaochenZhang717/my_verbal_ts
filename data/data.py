@@ -539,7 +539,7 @@ class V7Split(Dataset):
         self.time_point = np.arange(self.n_steps)
 
         if self.my_caps_path != "none":
-            if not self.caps_path.endswith(".jsonl"):
+            if not self.my_caps_path.endswith(".jsonl"):
                 caps_dict = {}
                 with open(f"{self.my_caps_path}/{self.split}_caps_ready.jsonl", "r") as f:
                     for line in f:
