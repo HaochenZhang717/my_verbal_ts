@@ -52,7 +52,7 @@ def train(training_stage, train_configs, model_diff_configs, model_cond_configs,
 
 
 def evaluate(training_stage, eval_configs, model_diff_configs, model_cond_configs, output_folder):
-    eval_configs["eval"]["model_path"] = os.path.join(output_folder, f"ckpts/{args.model_ckpt_name}.pth")
+    eval_configs["eval"]["model_path"] = os.path.join(output_folder, f"ckpts/{args.model_ckpt_name}")
 
     dataset = GenerationDataset(eval_configs["data"])
 
