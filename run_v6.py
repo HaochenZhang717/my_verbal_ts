@@ -52,7 +52,11 @@ def train(training_stage, train_configs, model_diff_configs, model_cond_configs,
 
 
 def evaluate(training_stage, eval_configs, model_diff_configs, model_cond_configs, output_folder):
-    eval_configs["eval"]["model_path"] = os.path.join(output_folder, f"ckpts/{args.model_ckpt_name}")
+    if args.model_ckpt_name != "none":
+        eval_configs["eval"]["model_path"] = os.path.join(output_folder, f"ckpts/{args.model_ckpt_name}")
+    else:
+        eval_configs["eval"]["model_path"] = os.path.join(output_folder, f"ckpts/model_best_loss.pth")
+
 
     dataset = GenerationDataset(eval_configs["data"])
 
@@ -68,8 +72,6 @@ def evaluate(training_stage, eval_configs, model_diff_configs, model_cond_config
     print("\n***** Evaluate Configs *****")
     path = os.path.join(output_folder, "eval_configs.yaml")
     save_configs(eval_configs, path=path)
-    # print("clip_config_path" in eval_configs["eval"].keys())
-    # breakpoint()
     evaluator = BaseEvaluator(eval_configs["eval"], dataset, model)
 
     df, samples_dict = _evaluate_cond_gen(evaluator)
@@ -101,12 +103,8 @@ def run(training_stage, train_configs, eval_configs, model_diff_configs, model_c
     if only_evaluate == False:
         train(training_stage, train_configs, model_diff_configs, model_cond_configs, eval_configs, output_folder)
     else:
-        eval_configs["data"]["folder"] = data_folder
-        df, samples = evaluate(training_stage, eval_configs, model_diff_configs, model_cond_configs, output_folder)
-        path = os.path.join(output_folder, "results.csv")
-        df.to_csv(path)
+        _, samples = evaluate(training_stage, eval_configs, model_diff_configs, model_cond_configs, output_folder)
         torch.save(samples, os.path.join(output_folder, args.samples_name))
-        # return df
 
 ##### Arguments #####
 parser = argparse.ArgumentParser(description="TSE")
@@ -120,7 +118,7 @@ parser.add_argument("--data_folder", type=str, default="./datasets")
 parser.add_argument("--save_folder", type=str, default="./save")
 parser.add_argument("--clip_folder", type=str, default="")
 parser.add_argument("--start_runid", type=int, default=0)
-parser.add_argument("--n_runs", type=int, default=3)
+parser.add_argument("--n_runs", type=int, default=1)
 parser.add_argument("--clip_cache_path", type=str, default="cache")
 
 parser.add_argument("--cond_modal", type=str, default="text")
@@ -183,7 +181,7 @@ if args.clip_folder != "":
 seed_list = [1, 7, 42]
 df_list = []
 
-eval_record_folder = eval_configs["data"]["folder"]
+# eval_record_folder = eval_configs["data"]["folder"]
 for n in range(args.start_runid, args.n_runs):
     fix_seed = seed_list[n]
     random.seed(fix_seed)
@@ -194,7 +192,7 @@ for n in range(args.start_runid, args.n_runs):
     output_folder = os.path.join(save_folder, str(n))
     os.makedirs(output_folder, exist_ok=True)
     eval_configs["eval"]["model_path"] = ""
-    eval_configs["data"]["folder"] = eval_record_folder
+    # eval_configs["data"]["folder"] = eval_record_folder
     if args.generator_pretrain_path != "":
         model_diff_configs["generator_pretrain_path"] = f"{args.generator_pretrain_path}/{n}/ckpts/model_best_loss.pth"
     else:
