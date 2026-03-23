@@ -104,6 +104,8 @@ class ConditionalGenerator(nn.Module):
         elif self.cond_configs["cond_modal"] == "attr":
             attrs = batch["attrs"].to(self.device).long()
         ts = ts.permute(0, 2, 1)
+
+        breakpoint()
         return ts, tp, attrs
 
     def generate(self, batch, n_samples, sampler="ddim"):

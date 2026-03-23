@@ -6,6 +6,34 @@ from torch.utils.data import Dataset
 import time
 import torch
 
+def merge_single_image(embed_dict):
+    """
+    输入:
+        embed_dict = self.embed_0323['image23999']
+
+    输出:
+        tensor shape = (4, 3, D)
+    """
+
+    segments = sorted(embed_dict.keys())  # seg1, seg2, seg3, seg4
+
+    merged = []
+
+    for seg in segments:
+        stage_dict = embed_dict[seg]
+
+        # 固定顺序！
+        stages = ["early", "middle", "late"]
+
+        stage_embeds = [stage_dict[s] for s in stages]  # list of (D,)
+        stage_embeds = torch.stack(stage_embeds, dim=0)  # (3, D)
+
+        merged.append(stage_embeds)
+
+    merged = torch.stack(merged, dim=0)  # (4, 3, D)
+
+    return merged
+
 
 class CustomDataset:
     def __init__(self, folder, **kwargs):
@@ -58,11 +86,15 @@ class CustomSplit(Dataset):
         if len(tmp_ts.shape) == 1:
             tmp_ts = tmp_ts[...,np.newaxis]
 
+        # cap_embed_0323 = self.embed_0323[f'image{idx}']
+        cap_embed_0323 = merge_single_image(self.embed_0323[f'image{idx}'])
+
         return {"ts": tmp_ts,
                 "ts_len": tmp_ts.shape[0],
                 # "verbal_qwen": self.verbalts_qwen_embed[cap_id],
                 # "attrs": self.attrs[idx],
                 "cap": self.caps[idx][cap_id],
+                "cap_0323_embed": cap_embed_0323,
                 "tp": self.time_point}
 
     def __len__(self):
