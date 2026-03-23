@@ -1,11 +1,12 @@
 from torch.utils.data import DataLoader
 
-from .data import CustomDataset, MyDataset, QwenV3Dataset
+from .data import CustomDataset, MyDataset, QwenV3Dataset, V7Dataset
 
 datasets = {
     "custom": CustomDataset,
     "mine": MyDataset,
-    "qwen_v3": QwenV3Dataset
+    "qwen_v3": QwenV3Dataset,
+    "v7": V7Dataset,
 }
 
 # class GenerationDataset:

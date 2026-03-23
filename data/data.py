@@ -316,7 +316,6 @@ class MySplit(Dataset):
         return out
 
 
-
 class QwenV3Dataset:
     """
     Wrapper class so that the block-causal dataset fits
@@ -498,3 +497,76 @@ class QwenV3Split(Dataset):
         out["caps"] = [b["caps"] for b in batch]
         out["moment_embed"] = torch.stack([b["moment_embed"] for b in batch]) if batch[0]["moment_embed"] is not None else None
         return out
+
+
+class V7Dataset:
+    def __init__(self, folder, my_caps_path, **kwargs):
+        super().__init__()
+        self.folder = folder
+        self.my_caps_path = my_caps_path
+        self._load_meta()
+
+    def _load_meta(self):
+        self.meta = json.load(open(os.path.join(self.folder, "meta.json")))
+        self.attr_list = self.meta["attr_list"]
+        n_attr = len(self.attr_list)
+        self.attr_ids = np.arange(n_attr)
+        self.attr_n_ops = np.array(self.meta["attr_n_ops"])
+
+    def get_split(self, split, *args):
+        return V7Split(self.folder, self.my_caps_path, split)
+
+
+class V7Split(Dataset):
+    def __init__(self, folder, my_caps_path, split="train"):
+        super().__init__()
+        assert split in ("train", "valid", "test"), "Please specify a valid split."
+        self.split = split
+        self.folder = folder
+        self.my_caps_path = my_caps_path
+        self._load_data()
+
+        print(f"Split: {self.split}, total samples {self.n_samples}.")
+
+    def _load_data(self):
+        ts = np.load(os.path.join(self.folder, self.split+"_ts.npy"))     # [n_samples, n_steps]
+        caps = np.load(os.path.join(self.folder, self.split+fr"_text_caps.npy"), allow_pickle=True)
+
+        self.ts, self.caps = ts, caps
+
+        self.n_samples = self.ts.shape[0]
+        self.n_steps = self.ts.shape[1]
+        self.time_point = np.arange(self.n_steps)
+
+        if self.caps_path != "none":
+            if not self.caps_path.endswith(".jsonl"):
+                caps_dict = {}
+                with open(f"{self.my_caps_path}/{self.split}_caps_ready.jsonl", "r") as f:
+                    for line in f:
+                        item = json.loads(line)
+                        caps_dict[item["id"]] = item["captions"]
+                self.my_caps = caps_dict
+            else:
+                caps_dict = {}
+                with open(self.caps_path, "r") as f:
+                    for line in f:
+                        item = json.loads(line)
+                        caps_dict[item["id"]] = item["captions"]
+                self.my_caps = caps_dict
+
+
+    def __getitem__(self, idx):
+        cap_id = random.randint(0, len(self.caps[idx])-1)
+        tmp_ts = self.ts[idx]
+        if len(tmp_ts.shape) == 1:
+            tmp_ts = tmp_ts[...,np.newaxis]
+
+        return {"ts": tmp_ts,
+                "ts_len": tmp_ts.shape[0],
+                # "cap": self.caps[idx][cap_id],
+                "cap": self.caps[idx],
+                "my_cap": self.my_caps[idx],
+                "tp": self.time_point}
+
+    def __len__(self):
+        return self.n_samples
