@@ -516,7 +516,6 @@ class V7Dataset:
     def get_split(self, split, *args):
         return V7Split(self.folder, self.my_caps_path, split)
 
-
 class V7Split(Dataset):
     def __init__(self, folder, my_caps_path, split="train"):
         super().__init__()
@@ -529,8 +528,14 @@ class V7Split(Dataset):
         print(f"Split: {self.split}, total samples {self.n_samples}.")
 
     def _load_data(self):
-        ts = np.load(os.path.join(self.folder, self.split+"_ts.npy"))     # [n_samples, n_steps]
-        caps = np.load(os.path.join(self.folder, self.split+fr"_text_caps.npy"), allow_pickle=True)
+        # ===== load ts =====
+        ts = np.load(os.path.join(self.folder, self.split + "_ts.npy"))  # [N, T]
+
+        # ===== load original caps =====
+        caps = np.load(
+            os.path.join(self.folder, self.split + "_text_caps.npy"),
+            allow_pickle=True
+        )
 
         self.ts, self.caps = ts, caps
 
@@ -538,36 +543,66 @@ class V7Split(Dataset):
         self.n_steps = self.ts.shape[1]
         self.time_point = np.arange(self.n_steps)
 
+        # ===== load my_caps =====
+        self.my_caps = None
         if self.my_caps_path != "none":
+            caps_dict = {}
+
+            # case 1: folder
             if not self.my_caps_path.endswith(".jsonl"):
-                caps_dict = {}
-                with open(f"{self.my_caps_path}/{self.split}_caps_ready.jsonl", "r") as f:
-                    for line in f:
-                        item = json.loads(line)
-                        caps_dict[item["id"]] = item["captions"]
-                self.my_caps = caps_dict
+                path = os.path.join(self.my_caps_path, f"{self.split}_caps_ready.jsonl")
             else:
-                caps_dict = {}
-                with open(self.caps_path, "r") as f:
-                    for line in f:
-                        item = json.loads(line)
-                        caps_dict[item["id"]] = item["captions"]
-                self.my_caps = caps_dict
-        # print(self.my_caps.keys())
-        # breakpoint()
+                path = self.my_caps_path
+
+            with open(path, "r") as f:
+                for line in f:
+                    item = json.loads(line)
+                    caps_dict[item["id"]] = item["captions"]
+
+            self.my_caps = caps_dict
+
+    # ===== 核心函数：把 dict list → string =====
+    def _merge_caps(self, raw_caps):
+        """
+        raw_caps:
+        [
+            {'seg1_channel0': '...'},
+            {'seg2_channel0': '...'},
+            ...
+        ]
+        ↓
+        "seg1_channel0: ...\nseg2_channel0: ..."
+        """
+        merged = []
+        for d in raw_caps:
+            for k, v in d.items():
+                merged.append(f"{k}: {v}")
+        return "\n".join(merged)
 
     def __getitem__(self, idx):
-        cap_id = random.randint(0, len(self.caps[idx])-1)
+        # ===== time series =====
         tmp_ts = self.ts[idx]
         if len(tmp_ts.shape) == 1:
-            tmp_ts = tmp_ts[...,np.newaxis]
+            tmp_ts = tmp_ts[..., np.newaxis]  # (T, 1)
 
-        return {"ts": tmp_ts,
-                "ts_len": tmp_ts.shape[0],
-                # "cap": self.caps[idx][cap_id],
-                "cap": self.caps[idx][cap_id],
-                "my_cap": np.array(self.my_caps[f'image{idx}']),
-                "tp": self.time_point}
+        # ===== original cap =====
+        cap_id = random.randint(0, len(self.caps[idx]) - 1)
+        cap = str(self.caps[idx][cap_id])  # 强制变 python str
+
+        # ===== my_cap（处理成 string）=====
+        if self.my_caps is not None:
+            raw_caps = self.my_caps[f'image{idx}']
+            my_cap = self._merge_caps(raw_caps)
+        else:
+            my_cap = ""
+
+        return {
+            "ts": tmp_ts.astype(np.float32),
+            "ts_len": tmp_ts.shape[0],
+            "cap": cap,
+            "my_cap": my_cap,
+            "tp": self.time_point.astype(np.float32),
+        }
 
     def __len__(self):
         return self.n_samples
@@ -575,8 +610,18 @@ class V7Split(Dataset):
     @staticmethod
     def collate_fn(batch):
         out = {}
-        out["ts"] = torch.stack([torch.from_numpy(b["ts"]) for b in batch])
-        out["tp"] = torch.stack([torch.from_numpy(b["tp"]) for b in batch])
+
+        # ===== tensor部分 =====
+        out["ts"] = torch.stack([
+            torch.from_numpy(b["ts"]) for b in batch
+        ])  # (B, T, C)
+
+        out["tp"] = torch.stack([
+            torch.from_numpy(b["tp"]) for b in batch
+        ])  # (B, T)
+
+        # ===== string部分（保持list）=====
         out["cap"] = [b["cap"] for b in batch]
         out["my_caps"] = [b["my_cap"] for b in batch]
+
         return out
