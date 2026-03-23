@@ -1,3 +1,5 @@
+from os import truncate
+
 import torch
 import torch.nn as nn
 import numpy as np
@@ -38,7 +40,7 @@ class CLIPTextEncoder(nn.Module):
             nn.Linear(configs["textemb_hidden_dim"], configs["text_emb"])
         )
     def forward(self, text):
-        inputs = self.tokenizer(text, padding=True, return_tensors="pt")["input_ids"]
+        inputs = self.tokenizer(text, padding=True, truncate=True, return_tensors="pt")["input_ids"]
         inputs = inputs.to(self.device)
         if "output_type" not in self.configs.keys():
             self.configs["output_type"] = "cls"
