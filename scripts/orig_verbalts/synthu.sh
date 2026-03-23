@@ -9,12 +9,12 @@ do
   do
     echo "Running lr=$LR bs=$BS"
 
-    export WANDB_NAME="synth_u_-lr${LR}_bs${BS}"
+    export WANDB_NAME="orig_verbalts_orig_cap-lr${LR}_bs${BS}"
 
     CUDA_VISIBLE_DEVICES=5 python run.py \
     --cond_modal text \
     --training_stage finetune \
-    --save_folder ../sweep_text2ts/synth_u/orig_verbalts_my_cap_v1 \
+    --save_folder ../sweep_text2ts/synth_u/orig_verbalts_orig_cap \
     --model_diff_config_path configs/synth_u/diff/model_text2ts_dep.yaml \
     --model_cond_config_path configs/synth_u/cond/text_msmdiffmv.yaml \
     --train_config_path configs/synth_u/train.yaml \
