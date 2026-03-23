@@ -113,7 +113,6 @@ class ConditionalGeneratorQwen(nn.Module):
             loss_dict[k] = loss_dict[k] / self.generator.num_steps
         return loss_dict
 
-
     def _unpack_data_cond_gen(self, batch):
         ts = batch["ts"].to(self.device).float()  # batch_size, num_channels, seq_len
         B, C, T = ts.shape
@@ -136,6 +135,8 @@ class ConditionalGeneratorQwen(nn.Module):
 
         ts, tp, text_embedding_all_segments, vae_embeds, moment_embeds = self._unpack_data_cond_gen(batch)
         B, C, T = ts.shape
+
+        guidance_scale = float(os.getenv("GUIDANCE_SCALE", 1.0))
 
         if self.cond_configs["cond_modal"] == "text":
             attr_embed_raw = text_embedding_all_segments
@@ -162,7 +163,13 @@ class ConditionalGeneratorQwen(nn.Module):
                 else:
                     raise NotImplementedError
 
-                pred_noise, _ = self.generator.predict_noise(x, tp, attr_embed, t)
+                pred_noise_cond, _ = self.generator.predict_noise(x, tp, attr_embed, t)
+                if guidance_scale == 1.0:
+                    pred_noise = pred_noise_cond
+                else:
+                    pred_noise_uncond, _ = self.generator.predict_noise(x, tp, None, t)
+                    pred_noise = pred_noise_uncond + guidance_scale * (pred_noise_cond - pred_noise_uncond)
+                # pred_noise, _ = self.generator.predict_noise(x, tp, attr_embed, t)
                 if sampler == "ddpm":
                     x = self.generator.ddpm.reverse(x, pred_noise, t, noise)
                 else:
