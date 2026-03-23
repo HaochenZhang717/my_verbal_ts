@@ -20,7 +20,7 @@ class Trainer:
         self._init_model(model)
         self._init_data(dataset)
         self._init_opt()
-        self._init_eval(eval_configs)
+        # self._init_eval(eval_configs)
         self._best_valid_loss = 1e10
         wandb.init(
             project="verbalts",  # 你可以改名字
