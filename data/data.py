@@ -566,7 +566,7 @@ class V7Split(Dataset):
                 "ts_len": tmp_ts.shape[0],
                 # "cap": self.caps[idx][cap_id],
                 "cap": self.caps[idx],
-                "my_cap": self.my_caps[f"image{idx}"],
+                "my_cap": self.my_caps[f'image{idx}'],
                 "tp": self.time_point}
 
     def __len__(self):
