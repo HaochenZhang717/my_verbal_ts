@@ -11,7 +11,7 @@ do
 
     CUDA_VISIBLE_DEVICES=4 python run.py \
     --cond_modal text \
-    --training_stage pretrain \
+    --training_stage finetune \
     --save_folder ../sweep_text2ts/synth_u/orig_verbalts_my_cap_v1 \
     --model_diff_config_path configs/synth_u/diff/model_text2ts_dep.yaml \
     --model_cond_config_path configs/synth_u/cond/text_msmdiffmv.yaml \
