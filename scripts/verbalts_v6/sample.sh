@@ -42,7 +42,7 @@ do
         --only_evaluate True \
         --n_runs 1 \
         --batch_size ${BS} \
-        --lr ${LR} \
+        --lr ${LR}
 done
 
 echo "All checkpoints finished!"
