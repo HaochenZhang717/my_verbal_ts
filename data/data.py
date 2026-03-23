@@ -553,7 +553,7 @@ class V7Split(Dataset):
                         item = json.loads(line)
                         caps_dict[item["id"]] = item["captions"]
                 self.my_caps = caps_dict
-        print(self.my_caps.keys())
+        # print(self.my_caps.keys())
         # breakpoint()
 
     def __getitem__(self, idx):
@@ -566,7 +566,7 @@ class V7Split(Dataset):
                 "ts_len": tmp_ts.shape[0],
                 # "cap": self.caps[idx][cap_id],
                 "cap": self.caps[idx],
-                "my_cap": self.my_caps[f'image{idx}'],
+                "my_cap": np.array(self.my_caps[f'image{idx}']),
                 "tp": self.time_point}
 
     def __len__(self):
