@@ -7,9 +7,9 @@ do
   do
     echo "Running lr=$LR bs=$BS"
 
-    export WANDB_NAME="synth_u_-lr${LR}_bs${BS}"
+    export WANDB_NAME="synth_u_v6_-lr${LR}_bs${BS}"
 
-    CUDA_VISIBLE_DEVICES=4 python run_v6.py \
+    CUDA_VISIBLE_DEVICES=1 python run_v6.py \
     --cond_modal text \
     --training_stage finetune \
     --save_folder ../sweep_text2ts_v6/synth_u/verbalts_v6 \
