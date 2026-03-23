@@ -44,7 +44,7 @@ do
         --channels ${CHANNELS} \
         --nheads ${NHEADS} \
         --diffusion_embedding_dim ${DIFFUSION_EMBEDDING_DIM} \
-        --batch_size 1024 \
+        --batch_size ${BS} \
         --lr ${LR} \
 
 done
