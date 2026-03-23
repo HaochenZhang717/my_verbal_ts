@@ -2,7 +2,7 @@
 data:
   name: custom
   folder: /playpen-shared/haochenz/LitsDatasets/128_len_ts/synthetic_u
-  my_caps_path: /playpen-shared/haochenz/LitsDatasets/128_len_caps_one_per_channel_0323/synth_u
+  my_caps_path: /playpen-shared/haochenz/LitsDatasets/128_len_caps_one_per_channel_0307/synth_u
 
 ### Pretrain ###
 train:
