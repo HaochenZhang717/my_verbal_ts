@@ -9,7 +9,7 @@ from evaluation.base_evaluator import BaseEvaluator
 import matplotlib.pyplot as plt
 import wandb
 import copy
-
+from tqdm import tqdm
 
 class Trainer:
     """
@@ -131,7 +131,7 @@ class Trainer:
             avg_loss = 0
             self.model.train()
 
-            for batch_no, train_batch in enumerate(self.train_loader):
+            for batch_no, train_batch in tqdm(enumerate(self.train_loader)):
                 self._global_batch_no += 1
                 self.opt.zero_grad()
                 loss_dict = self.model(train_batch, is_train=True)
