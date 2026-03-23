@@ -13,7 +13,7 @@ EXP_NAME="vae_synth_u"
 DATA_ROOT="/playpen-shared/haochenz/LitsDatasets/128_len_ts/synthetic_u"
 CKPT_PATH="./vae_ckpts/${EXP_NAME}/best.pt"
 
-SAVE_ROOT="./vae_embeddings/synth_u"
+SAVE_ROOT="../vae_embeddings/synth_u"
 mkdir -p ${SAVE_ROOT}
 
 # =========================
