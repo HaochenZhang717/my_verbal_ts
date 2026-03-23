@@ -15,10 +15,10 @@ do
     --cond_modal text \
     --training_stage finetune \
     --save_folder ../sweep_text2ts/synth_u/orig_verbalts_my_cap \
-    --model_diff_config_path configs/synth_u/diff/model_text2ts_dep.yaml \
-    --model_cond_config_path configs/synth_u/cond/text_msmdiffmv.yaml \
-    --train_config_path configs/synth_u/train.yaml \
-    --evaluate_config_path configs/synth_u/evaluate.yaml \
+    --model_diff_config_path configs/synth_u_v7/diff/model_text2ts_dep.yaml \
+    --model_cond_config_path configs/synth_u_v7/cond/text_msmdiffmv.yaml \
+    --train_config_path configs/synth_u_v7/train.yaml \
+    --evaluate_config_path configs/synth_u_v7/evaluate.yaml \
     --data_folder /playpen-shared/haochenz/LitsDatasets/128_len_ts/synthetic_u \
     --clip_folder "" \
     --multipatch_num 3 \
