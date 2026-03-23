@@ -107,7 +107,7 @@ class ConditionalGeneratorDebug(nn.Module):
         # elif self.cond_configs["cond_modal"] == "attr":
         #     attrs = batch["attrs"].to(self.device).long()
         # ts = ts.permute(0, 2, 1)
-
+        breakpoint()
         attrs = merge_caps_all(
             batch['caps'],
             n_channels=C,  # 或者你的C
