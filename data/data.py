@@ -38,7 +38,7 @@ class CustomSplit(Dataset):
         ts = np.load(os.path.join(self.folder, self.split+"_ts.npy"))     # [n_samples, n_steps]
         # attrs = np.load(os.path.join(self.folder, self.split+"_attrs_idx.npy"))  # [n_samples, n_attrs]
         caps = np.load(os.path.join(self.folder, self.split+fr"_text_caps.npy"), allow_pickle=True)
-        embed_0323 = np.load(os.path.join(self.folder, self.split+fr"_embed_0323.npy"), allow_pickle=True)
+        embed_0323 = torch.load(os.path.join(self.folder, self.split+fr"_embed_0323.npy"), weights_only=False)
 
         # verbalts_qwen_embed = torch.load(os.path.join(self.folder, self.split+fr"_verbalts_qwen_embeds.npy"), weights_only=False)
         # verbalts_qwen_embed = verbalts_qwen_embed["embeddings"]
