@@ -565,7 +565,7 @@ class V7Split(Dataset):
         return {"ts": tmp_ts,
                 "ts_len": tmp_ts.shape[0],
                 # "cap": self.caps[idx][cap_id],
-                "cap": self.caps[idx],
+                "cap": self.caps[idx][cap_id],
                 "my_cap": np.array(self.my_caps[f'image{idx}']),
                 "tp": self.time_point}
 
