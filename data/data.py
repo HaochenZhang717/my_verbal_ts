@@ -64,8 +64,8 @@ class CustomSplit(Dataset):
 
     def _load_data(self):
         ts = np.load(os.path.join(self.folder, self.split+"_ts.npy"))     # [n_samples, n_steps]
-        caps = np.load(os.path.join(self.folder, self.split+fr"_text_caps.npy"), allow_pickle=True)
-        # caps = np.load(os.path.join(self.folder, self.split+fr"_caps_0324.npy"), allow_pickle=True)
+        # caps = np.load(os.path.join(self.folder, self.split+fr"_text_caps.npy"), allow_pickle=True)
+        caps = np.load(os.path.join(self.folder, self.split+fr"_caps_0324.npy"), allow_pickle=True)
 
         self.ts, self.caps = ts, caps
 
