@@ -530,7 +530,7 @@ class V7Split(Dataset):
     def _load_data(self):
         # ===== load ts =====
         ts = np.load(os.path.join(self.folder, self.split + "_ts.npy"))  # [N, T]
-        caps_embed = torch.load(os.path.join(self.folder, self.split + "_embeds_long_clip_seq.pt"), map_location="cpu")
+        # caps_embed = torch.load(os.path.join(self.folder, self.split + "_embeds_long_clip_seq.pt"), map_location="cpu")
         # ===== load original caps =====
         caps = np.load(
             os.path.join(self.folder, self.split + "_text_caps.npy"),
@@ -538,7 +538,7 @@ class V7Split(Dataset):
         )
 
         self.ts, self.caps = ts, caps
-        self.caps_embed = caps_embed['embeddings']
+        # self.caps_embed = caps_embed['embeddings']
         self.n_samples = self.ts.shape[0]
         self.n_steps = self.ts.shape[1]
         self.time_point = np.arange(self.n_steps)
@@ -601,7 +601,7 @@ class V7Split(Dataset):
             "ts_len": tmp_ts.shape[0],
             "cap": cap,
             "my_cap": my_cap,
-            "my_cap_embed": self.caps_embed[cap_id],
+            # "my_cap_embed": self.caps_embed[cap_id],
             "tp": self.time_point.astype(np.float32),
             "idx": idx
         }
@@ -625,6 +625,6 @@ class V7Split(Dataset):
         # ===== string部分（保持list）=====
         out["cap"] = [b["cap"] for b in batch]
         out["my_caps"] = [b["my_cap"] for b in batch]
-        out["my_cap_embed"] = torch.stack([b["my_cap_embed"] for b in batch])
+        # out["my_cap_embed"] = torch.stack([b["my_cap_embed"] for b in batch])
         out["indices"] = [b["idx"] for b in batch]
         return out
