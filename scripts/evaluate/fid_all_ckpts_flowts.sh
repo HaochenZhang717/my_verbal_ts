@@ -8,7 +8,7 @@ export CUDA_VISIBLE_DEVICES=6
 
 # 👉 必须是真实数据（GT）
 REAL_PATH="/playpen/haochenz/oldsweep/synth_u_qwen_v1/lr_1e-3_bs_128-L10C128H8D128-dropout0.1-cfg0.1/0/real_text_samples_model_epoch_2499.pt"
-SAMPLE_DIR='/playpen-nvme/haochenz/ts_baselines/FlowTS/FMTS/results_neurips_baselines/synthu/LR0.0001-BS$128'
+SAMPLE_DIR='/playpen-shared/haochenz/flowts_neurips_baseline/synthu/LR0.0001-BS$128'
 
 
 SAVE_FILE="./fid_results/synth_u_flowts.txt"
