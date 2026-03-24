@@ -11,7 +11,7 @@ do
 
     export WANDB_NAME="orig_verbalts_my_cap-lr${LR}_bs${BS}"
 
-    CUDA_VISIBLE_DEVICES=4 python run_v7.py \
+    CUDA_VISIBLE_DEVICES=5 python run_v7.py \
     --cond_modal text \
     --training_stage finetune \
     --save_folder ../sweep_text2ts/synth_u_identical_new/orig_verbalts_my_cap \
