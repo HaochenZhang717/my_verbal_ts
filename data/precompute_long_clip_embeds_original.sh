@@ -3,7 +3,7 @@
 # =========================
 # CONFIG
 # =========================
-export CUDA_VISIBLE_DEVICES=5
+export CUDA_VISIBLE_DEVICES=7
 
 CAPS_PATH="/playpen-shared/haochenz/LitsDatasets/128_len_ts/synthetic_u"
 SAVE_ROOT="/playpen-shared/haochenz/LitsDatasets/128_len_ts/synthetic_u"
