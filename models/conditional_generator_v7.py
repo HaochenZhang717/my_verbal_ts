@@ -64,7 +64,7 @@ class ConditionalGeneratorV7(nn.Module):
     Finetune.
     """
     def forward(self, batch, is_train):
-        x, tp, attrs = self._unpack_data_cond_gen(batch)
+        x, tp, attrs, attrs_mask = self._unpack_data_cond_gen(batch)
         attr_emb_raw = self.attr_en(attrs)
         if self.cond_configs["cond_modal"] == "attr" or "diffstep" not in self.cond_configs["text"]["text_projector"]:
             attr_emb = self.cond_projector(attr_emb_raw)
@@ -73,7 +73,7 @@ class ConditionalGeneratorV7(nn.Module):
         if is_train:
             t = torch.randint(0, self.generator.num_steps, [B], device=self.device)
             if "text" in self.cond_configs["cond_modal"] and "diffstep" in self.cond_configs["text"]["text_projector"]:
-                attr_emb = self.cond_projector(attr_emb_raw, t)
+                attr_emb = self.cond_projector(attr_emb_raw, t, attrs_mask)
             loss = self.generator._noise_estimation_loss(x, tp, attr_emb, t)
             return loss
         
@@ -81,10 +81,8 @@ class ConditionalGeneratorV7(nn.Module):
         for t in range(self.generator.num_steps):
             t = (torch.ones(B, device=self.device) * t).long()
             if "text" in self.cond_configs["cond_modal"] and "diffstep" in self.cond_configs["text"]["text_projector"]:
-                attr_emb = self.cond_projector(attr_emb_raw, t)
-                # print(f"attr_emb shape {attr_emb.shape}")
-                # print(f"attr_emb_raw shape {attr_emb_raw.shape}")
-                # breakpoint()
+                attr_emb = self.cond_projector(attr_emb_raw, t, attrs_mask)
+
             tmp_loss_dict = self.generator._noise_estimation_loss(x, tp, attr_emb, t)
             for k in tmp_loss_dict:
                 if k in loss_dict.keys():
@@ -106,7 +104,7 @@ class ConditionalGeneratorV7(nn.Module):
         #     attrs = batch["attrs"].to(self.device).long()
         ts = ts.permute(0, 2, 1)
 
-        return ts, tp, batch["my_cap_embed"].to(self.device).float()
+        return ts, tp, batch["my_cap_embed"].float(), batch["my_cap_embed_mask"].long()
 
     def generate(self, batch, n_samples, sampler="ddim"):
         if self.cond_configs["cond_modal"] == "constraint":
@@ -119,7 +117,7 @@ class ConditionalGeneratorV7(nn.Module):
     """
     @torch.no_grad()
     def generate_text(self, batch, n_samples, sampler="ddim"):
-        ts, tp, attrs = self._unpack_data_cond_gen(batch)
+        ts, tp, attrs, attrs_mask = self._unpack_data_cond_gen(batch)
         attr_emb_raw = self.attr_en(attrs)
         if self.cond_configs["cond_modal"] == "attr" or "diffstep" not in self.cond_configs["text"]["text_projector"]:
             attr_emb = self.cond_projector(attr_emb_raw)
@@ -133,7 +131,7 @@ class ConditionalGeneratorV7(nn.Module):
                 noise = torch.randn_like(x)
                 t = (torch.ones(B, device=self.device) * t).long()
                 if "text" in self.cond_configs["cond_modal"] and "diffstep" in self.cond_configs["text"]["text_projector"]:
-                    attr_emb = self.cond_projector(attr_emb_raw, t)
+                    attr_emb = self.cond_projector(attr_emb_raw, t, attrs_mask)
 
                 # print(f"attr_emb shape {attr_emb.shape}")
                 # print(f"attr_emb_raw shape {attr_emb_raw.shape}")
@@ -142,32 +140,6 @@ class ConditionalGeneratorV7(nn.Module):
                 if sampler == "ddpm":
                     x = self.generator.ddpm.reverse(x, pred_noise, t, noise)
                 else:
-                    x = self.generator.ddim.reverse(x, pred_noise, t, noise, is_determin=True)
-            samples.append(x)
-        return torch.stack(samples)
-    
-    def generate_constraint(self, batch, n_samples, sampler="ddim"):
-        ts, tp, attrs = self._unpack_data_cond_gen(batch)
-        samples = []
-        B = ts.shape[0]
-        for i in range(n_samples):
-            x = torch.randn_like(ts)
-            for t in range(self.generator.num_steps-1, -1, -1):
-                noise = torch.randn_like(x)
-                t = (torch.ones(B, device=self.device) * t).long()
-                with torch.no_grad():
-                    pred_noise, _ = self.generator.predict_noise(x, tp, None, t)
-                if sampler == "ddpm":
-                    x = self.generator.ddpm.reverse(x, pred_noise, t, noise)
-                else:
-                    x0 = self.generator.ddim.predict_x0(x, pred_noise, t).permute(0,2,1)
-                    with torch.set_grad_enabled(True):
-                        x0.requires_grad = True
-                        ts_emb = self.cond_guide_model.get_ts_coemb(x0, None)
-                        text_emb = self.cond_guide_model.get_text_coemb(attrs, None)
-                        negative_cttp = -torch.mm(ts_emb, text_emb.permute(1,0)).trace()
-                        negative_cttp.backward()
-                    pred_noise -= self.cond_configs["constraint"]["guide_w"] * self.generator.ddim.one_minus_alpha_bar_sqrt[t] * x0.grad.permute(0,2,1)
                     x = self.generator.ddim.reverse(x, pred_noise, t, noise, is_determin=True)
             samples.append(x)
         return torch.stack(samples)
