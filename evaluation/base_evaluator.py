@@ -152,6 +152,7 @@ class BaseEvaluator:
             for batch_no, batch in enumerate(self.test_loader):
                 if hasattr(self, "long_clip_embeds_test"):
                     batch["my_cap_embed"] = self.long_clip_embeds_test["embeddings"][batch["indices"]]
+                    batch["my_cap_embed_mask"] = self.long_clip_embeds_test["all_masks"][batch["indices"]]
 
                 start_time = time.time()
 
