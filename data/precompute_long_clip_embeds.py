@@ -41,7 +41,7 @@ class ClipTextEncoder(torch.nn.Module):
             return_tensors="pt"
         )
         input_ids = inputs["input_ids"].to(self.device)
-
+        breakpoint()
         outputs = self.model(input_ids=input_ids)
         text_emb = outputs.last_hidden_state  # (B, L, D)
 
