@@ -14,7 +14,7 @@ do
     CUDA_VISIBLE_DEVICES=6 python run_v7.py \
     --cond_modal text \
     --training_stage finetune \
-    --save_folder ../sweep_text2ts/synth_u_identical_new/orig_verbalts_my_cap \
+    --save_folder ../sweep_text2ts/synth_u/orig_verbalts_my_cap-lr${LR}_bs${BS}_cosine \
     --model_diff_config_path configs/synth_u_v7/diff/model_text2ts_dep.yaml \
     --model_cond_config_path configs/synth_u_v7/cond/text_msmdiffmv.yaml \
     --train_config_path configs/synth_u_v7/train.yaml \
