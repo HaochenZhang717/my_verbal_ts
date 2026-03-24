@@ -175,7 +175,7 @@ def precompute_from_npy(
 
     torch.save({
         "embeddings": all_embeds,  # (N, L, D)
-        "ids": all_masks
+        "all_masks": all_masks
     }, save_path)
     print(f"Saved to {save_path}")
     print("Shape:", all_embeds.shape)

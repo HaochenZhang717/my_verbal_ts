@@ -143,7 +143,8 @@ class Trainer:
                 self.opt.zero_grad()
                 if hasattr(self, "long_clip_embeds_train"):
                     # train_batch["my_cap_embed"] = self.long_clip_embeds_train["embeddings"][train_batch["indices"]]
-                    train_batch["my_cap_embed"] = self.long_clip_embeds_train[train_batch["indices"]]
+                    train_batch["my_cap_embed"] = self.long_clip_embeds_train["embeddings"][train_batch["indices"]]
+                    train_batch["my_cap_embed_mask"] = self.long_clip_embeds_train["all_masks"][train_batch["indices"]]
                 loss_dict = self.model(train_batch, is_train=True)
 
                 loss_dict["all"].backward()
