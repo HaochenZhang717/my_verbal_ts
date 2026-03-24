@@ -116,7 +116,7 @@ class ConditionalGeneratorV7(nn.Module):
         #     attrs = batch["attrs"].to(self.device).long()
         ts = ts.permute(0, 2, 1)
 
-        return ts, tp, batch["my_caps_embed"].to(self.device).float()
+        return ts, tp, batch["my_cap_embed"].to(self.device).float()
 
     def generate(self, batch, n_samples, sampler="ddim"):
         if self.cond_configs["cond_modal"] == "constraint":
