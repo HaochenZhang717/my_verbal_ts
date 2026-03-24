@@ -41,8 +41,11 @@ class ClipTextEncoder(torch.nn.Module):
             return_tensors="pt"
         )
         input_ids = inputs["input_ids"].to(self.device)
-        breakpoint()
-        outputs = self.model(input_ids=input_ids)
+        attention_mask = inputs["attention_mask"].to(self.device)
+        outputs = self.model(
+            input_ids=input_ids,
+            attention_mask=attention_mask
+        )
         text_emb = outputs.last_hidden_state  # (B, L, D)
 
         return text_emb
@@ -149,26 +152,31 @@ def precompute_from_npy(
     encoder = ClipTextEncoder(device).to(device)
 
     all_embeds = []
-
+    all_masks = []
     # =========================
     # batch encode
     # =========================
     for i in tqdm(range(0, len(caps), batch_size)):
         batch_text = [cap[0] for cap in caps[i:i + batch_size]]
         # batch_text = caps[i:i + batch_size]
-        embeds = encoder(batch_text)  # (B, L, D)
+        embeds, attn_masks = encoder(batch_text)  # (B, L, D)
         all_embeds.append(embeds.cpu())
+        all_masks.append(attn_masks)
 
     # =========================
     # 拼成 (N, L, D)
     # =========================
     all_embeds = torch.cat(all_embeds, dim=0)  # (N, L, D)
-
+    all_masks = torch.cat(all_masks, dim=0)
     # =========================
     # 保存
     # =========================
-    torch.save(all_embeds, save_path)
-
+    # torch.save(all_embeds, save_path)
+    breakpoint()
+    torch.save({
+        "embeddings": all_embeds,  # (N, L, D)
+        "ids": all_masks
+    }, save_path)
     print(f"Saved to {save_path}")
     print("Shape:", all_embeds.shape)
 
