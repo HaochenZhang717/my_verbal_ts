@@ -117,7 +117,6 @@ def precompute(
         batch_text = all_texts[i:i + batch_size]
         embeds = encoder(batch_text)  # (B, L, D)
         all_embeds.append(embeds.cpu())
-        breakpoint()
 
     # =========================
     # 拼成 (N, L, D)
