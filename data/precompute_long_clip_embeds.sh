@@ -5,12 +5,12 @@
 # =========================
 export CUDA_VISIBLE_DEVICES=5
 
-CAPS_PATH="/playpen-shared/haochenz/LitsDatasets/128_len_caps_one_per_channel_0323/synth_u"
+CAPS_PATH="/playpen-shared/haochenz/LitsDatasets/128_len_ts/synthetic_u"
 SAVE_ROOT="/playpen-shared/haochenz/LitsDatasets/128_len_ts/synthetic_u"
 
 SCRIPT_PATH="precompute_long_clip_embeds.py"
 
-BATCH_SIZE=128
+BATCH_SIZE=512
 DEVICE="cuda"
 
 mkdir -p $SAVE_ROOT
@@ -22,7 +22,7 @@ echo "Start precomputing LongClip embeddings..."
 # =========================
 python $SCRIPT_PATH \
     --caps_path $CAPS_PATH \
-    --save_path $SAVE_ROOT/train_embeds_long_clip_seq.pt \
+    --save_path $SAVE_ROOT/train_embeds_long_clip_seq_0324.pt \
     --split train \
     --batch_size $BATCH_SIZE \
     --device $DEVICE
@@ -32,7 +32,7 @@ python $SCRIPT_PATH \
 # =========================
 python $SCRIPT_PATH \
     --caps_path $CAPS_PATH \
-    --save_path $SAVE_ROOT/valid_embeds_long_clip_seq.pt \
+    --save_path $SAVE_ROOT/valid_embeds_long_clip_seq_0324.pt \
     --split valid \
     --batch_size $BATCH_SIZE \
     --device $DEVICE
@@ -42,7 +42,7 @@ python $SCRIPT_PATH \
 # =========================
 python $SCRIPT_PATH \
     --caps_path $CAPS_PATH \
-    --save_path $SAVE_ROOT/test_embeds_long_clip_seq.pt \
+    --save_path $SAVE_ROOT/test_embeds_long_clip_seq_0324.pt \
     --split test \
     --batch_size $BATCH_SIZE \
     --device $DEVICE

@@ -4,6 +4,7 @@ import torch
 import argparse
 from tqdm import tqdm
 from transformers import AutoTokenizer, CLIPTextModelWithProjection
+import numpy as np
 
 
 # =========================
@@ -73,7 +74,7 @@ def merge_caps(caps_list):
 # =========================
 # 主逻辑
 # =========================
-def precompute(
+def precompute_from_jsonl(
     caps_path,
     save_path,
     split="train",
@@ -135,6 +136,42 @@ def precompute(
     print("Shape:", all_embeds.shape)
 
 
+def precompute_from_npy(
+    caps_path,
+    save_path,
+    split="train",
+    batch_size=64,
+    device="cuda"
+):
+
+    print("Loading captions...")
+    caps = np.load(f"{caps_path}/{split}_caps_0324.npy", allow_pickle=True)
+    encoder = ClipTextEncoder(device).to(device)
+
+    all_embeds = []
+
+    # =========================
+    # batch encode
+    # =========================
+    for i in tqdm(range(0, len(caps), batch_size)):
+        batch_text = caps[i:i + batch_size]
+        embeds = encoder(batch_text)  # (B, L, D)
+        all_embeds.append(embeds.cpu())
+
+    # =========================
+    # 拼成 (N, L, D)
+    # =========================
+    all_embeds = torch.cat(all_embeds, dim=0)  # (N, L, D)
+
+    # =========================
+    # 保存
+    # =========================
+    torch.save(all_embeds, save_path)
+
+    print(f"Saved to {save_path}")
+    print("Shape:", all_embeds.shape)
+
+
 # =========================
 # CLI
 # =========================
@@ -149,7 +186,7 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
 
-    precompute(
+    precompute_from_npy(
         caps_path=args.caps_path,
         save_path=args.save_path,
         split=args.split,
