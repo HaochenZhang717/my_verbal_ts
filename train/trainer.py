@@ -97,13 +97,12 @@ class Trainer:
         #     eta_min=0.5 * self.lr  # 最小学习率
         # )
 
-
     def _init_data(self, dataset):
         self.dataset = dataset
         if isinstance(self.dataset.dataset, data.data.V7Dataset):
             folder = self.dataset.configs['folder']
-            self.long_clip_embeds_train = torch.load(os.path.join(folder, "train_embeds_long_clip_seq.pt"), map_location="cuda")
-            self.long_clip_embeds_valid = torch.load(os.path.join(folder, "valid_embeds_long_clip_seq.pt"), map_location="cuda")
+            self.long_clip_embeds_train = torch.load(os.path.join(folder, "train_embeds_long_clip_seq_0324.pt"), map_location="cuda")
+            self.long_clip_embeds_valid = torch.load(os.path.join(folder, "valid_embeds_long_clip_seq_0324.pt"), map_location="cuda")
         # breakpoint()
         self.train_loader = dataset.get_loader(split="train", batch_size=self.batch_size, shuffle=True, include_self=True)
         self.valid_loader = dataset.get_loader(split="valid", batch_size=self.batch_size, shuffle=False, include_self=True)

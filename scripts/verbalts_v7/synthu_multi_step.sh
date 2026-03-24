@@ -1,5 +1,7 @@
-LR_LIST=(1e-3 5e-4 2e-4)
-BS_LIST=(64 128 256 512)
+#LR_LIST=(1e-3 5e-4 2e-4)
+#BS_LIST=(64 128 256 512)
+LR_LIST=(1e-3)
+BS_LIST=(512)
 
 export SCHEDULER=MULTISTEP
 
@@ -9,7 +11,7 @@ do
   do
     echo "Running lr=$LR bs=$BS"
 
-    export WANDB_NAME="orig_verbalts_my_cap-lr${LR}_bs${BS}_multistep"
+    export WANDB_NAME="orig_verbalts_my_cap_0324-lr${LR}_bs${BS}_multistep"
 
     CUDA_VISIBLE_DEVICES=5 python run_v7.py \
     --cond_modal text \
