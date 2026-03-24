@@ -17,7 +17,7 @@ do
     CUDA_VISIBLE_DEVICES=2 python run_v7.py \
     --cond_modal text \
     --training_stage finetune \
-    --save_folder ../sweep_text2ts/synth_u/orig_verbalts_orig_cap_embed-lr${LR}_bs${BS}_multistep \
+    --save_folder ../sweep_text2ts/synth_u/orig_verbalts_orig_cap_precompute_embed-lr${LR}_bs${BS}_multistep \
     --model_diff_config_path configs/synth_u_v7/diff/model_text2ts_dep.yaml \
     --model_cond_config_path configs/synth_u_v7/cond/text_msmdiffmv.yaml \
     --train_config_path configs/synth_u_v7/train.yaml \
