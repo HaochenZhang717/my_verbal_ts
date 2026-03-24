@@ -11,7 +11,7 @@ REAL_PATH="/playpen/haochenz/oldsweep/synth_u_qwen_v1/lr_1e-3_bs_128-L10C128H8D1
 SAMPLE_DIR='/playpen-shared/haochenz/flowts_neurips_baseline/synthu/LR0.0001-BS$128'
 
 
-SAVE_FILE="../fid_results/synth_u_flowts.txt"
+SAVE_FILE="./fid_results/synth_u_flowts.txt"
 
 mkdir -p ./fid_results
 
@@ -33,7 +33,7 @@ do
     result=$(python calculate_fid_imagentime.py \
         --real_path ${REAL_PATH} \
         --fake_path ${sample_path} \
-        --ckpt_path "./fid_vae_ckpts/vae_synth_u/best.pt" \
+        --ckpt_path "../fid_vae_ckpts/vae_synth_u/best.pt" \
         --batch_size 128 \
         --hidden_size 128 \
         --num_layers 2 \
