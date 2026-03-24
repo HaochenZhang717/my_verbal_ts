@@ -21,9 +21,6 @@ class ConditionalGeneratorV7(nn.Module):
         self.data_configs = data_configs
         self._init_condition_encoders(diff_configs, cond_configs)
         self._init_diff(diff_configs)
-        breakpoint()
-        self.precomputed_clip_embeds = torch.load(os.path.join(self.folder, self.split + "_embeds_long_clip_seq.pt"), map_location="cpu")
-
 
     def _init_condition_encoders(self, diff_configs, cond_configs):
         if cond_configs["cond_modal"] == "constraint":

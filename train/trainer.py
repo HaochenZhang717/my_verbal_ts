@@ -3,6 +3,8 @@ import time
 import numpy as np
 import torch
 from torch.optim import Adam
+
+import data.data
 # from torch.utils.tensorboard import SummaryWriter
 from data import GenerationDataset
 from evaluation.base_evaluator import BaseEvaluator
@@ -97,7 +99,11 @@ class Trainer:
 
 
     def _init_data(self, dataset):
+
         self.dataset = dataset
+        if isinstance(self.dataset.dataset, data.data.V7Dataset):
+            breakpoint()
+        # breakpoint()
         self.train_loader = dataset.get_loader(split="train", batch_size=self.batch_size, shuffle=True, include_self=True)
         self.valid_loader = dataset.get_loader(split="valid", batch_size=self.batch_size, shuffle=False, include_self=True)
 
