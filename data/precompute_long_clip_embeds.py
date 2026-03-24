@@ -154,7 +154,8 @@ def precompute_from_npy(
     # batch encode
     # =========================
     for i in tqdm(range(0, len(caps), batch_size)):
-        batch_text = caps[i:i + batch_size]
+        batch_text = [cap[0] for cap in caps[i:i + batch_size]]
+        # batch_text = caps[i:i + batch_size]
         embeds = encoder(batch_text)  # (B, L, D)
         all_embeds.append(embeds.cpu())
 
