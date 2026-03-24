@@ -22,7 +22,7 @@ echo "==========================" >> ${SAVE_FILE}
 # 遍历所有 ckpt samples
 # =========================
 
-for sample_path in ${SAMPLE_DIR}/flowts_samples_*.pt
+for sample_path in ${SAMPLE_DIR}/flowts_samples_*.npy
 do
     sample_name=$(basename ${sample_path})
 
@@ -30,7 +30,7 @@ do
     echo "Evaluating: ${sample_name}"
     echo "======================================"
 
-    result=$(python calculate_fid_imagentime.py \
+    result=$(python calculate_fid_diffusionTS.py \
         --real_path ${REAL_PATH} \
         --fake_path ${sample_path} \
         --ckpt_path "../fid_vae_ckpts/vae_synth_u/best.pt" \
