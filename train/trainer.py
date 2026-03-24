@@ -141,7 +141,8 @@ class Trainer:
             for batch_no, train_batch in tqdm(enumerate(self.train_loader)):
                 self._global_batch_no += 1
                 self.opt.zero_grad()
-                train_batch["my_cap_embed"] = self.long_clip_embeds_train["embeddings"][train_batch["indices"]]
+                if hasattr(self, "long_clip_embeds_train"):
+                    train_batch["my_cap_embed"] = self.long_clip_embeds_train["embeddings"][train_batch["indices"]]
                 loss_dict = self.model(train_batch, is_train=True)
 
                 loss_dict["all"].backward()
@@ -179,7 +180,8 @@ class Trainer:
         avg_loss_valid = 0
         with torch.no_grad():
             for batch_no, valid_batch in enumerate(self.valid_loader):
-                valid_batch["my_cap_embed"] = self.long_clip_embeds_train["embeddings"][valid_batch["indices"]]
+                if hasattr(self, "long_clip_embeds_valid"):
+                    valid_batch["my_cap_embed"] = self.long_clip_embeds_train["embeddings"][valid_batch["indices"]]
                 loss_dict = self.ema_model(valid_batch, is_train=False)
                 avg_loss_valid += loss_dict["all"].item()
 
