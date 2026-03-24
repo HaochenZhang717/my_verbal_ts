@@ -48,7 +48,7 @@ class ClipTextEncoder(torch.nn.Module):
         )
         text_emb = outputs.last_hidden_state  # (B, L, D)
 
-        return text_emb
+        return text_emb, attention_mask
 
 
 # =========================
