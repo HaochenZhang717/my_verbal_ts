@@ -138,13 +138,14 @@ def precompute_from_jsonl(
 def precompute_from_npy(
     caps_path,
     save_path,
+    npy_name,
     split="train",
     batch_size=64,
     device="cuda"
 ):
 
     print("Loading captions...")
-    caps = np.load(f"{caps_path}/{split}_caps_0324.npy", allow_pickle=True)
+    caps = np.load(f"{caps_path}/{split}_{npy_name}.npy", allow_pickle=True)
     encoder = ClipTextEncoder(device).to(device)
 
     all_embeds = []
@@ -181,6 +182,7 @@ if __name__ == "__main__":
     parser.add_argument("--caps_path", type=str, required=True)
     parser.add_argument("--save_path", type=str, required=True)
     parser.add_argument("--split", type=str, default="train")
+    parser.add_argument("--npy_name", type=str, default="train")
     parser.add_argument("--batch_size", type=int, default=64)
     parser.add_argument("--device", type=str, default="cuda")
 
@@ -189,6 +191,7 @@ if __name__ == "__main__":
     precompute_from_npy(
         caps_path=args.caps_path,
         save_path=args.save_path,
+        npy_name=args.npy_name,
         split=args.split,
         batch_size=args.batch_size,
         device=args.device,
