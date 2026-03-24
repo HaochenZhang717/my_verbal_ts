@@ -101,8 +101,9 @@ class Trainer:
         self.dataset = dataset
         if isinstance(self.dataset.dataset, data.data.V7Dataset):
             folder = self.dataset.configs['folder']
-            self.long_clip_embeds_train = torch.load(os.path.join(folder, "train_embeds_long_clip_seq_0324.pt"), map_location="cuda")
-            self.long_clip_embeds_valid = torch.load(os.path.join(folder, "valid_embeds_long_clip_seq_0324.pt"), map_location="cuda")
+            embed_name = os.getenv("EMBED_NAME", "embeds_long_clip_seq_0324")
+            self.long_clip_embeds_train = torch.load(os.path.join(folder, f"train_{embed_name}.pt"), map_location="cuda")
+            self.long_clip_embeds_valid = torch.load(os.path.join(folder, f"valid_{embed_name}.pt"), map_location="cuda")
         # breakpoint()
         self.train_loader = dataset.get_loader(split="train", batch_size=self.batch_size, shuffle=True, include_self=True)
         self.valid_loader = dataset.get_loader(split="valid", batch_size=self.batch_size, shuffle=False, include_self=True)

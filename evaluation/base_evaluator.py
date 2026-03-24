@@ -118,8 +118,10 @@ class BaseEvaluator:
         self.dataset = dataset
         if isinstance(self.dataset.dataset, data.data.V7Dataset):
             folder = self.dataset.configs['folder']
-            self.long_clip_embeds_test = torch.load(os.path.join(folder, "test_embeds_long_clip_seq_0324.pt"),
-                                                     map_location="cuda")
+            embed_name = os.getenv("EMBED_NAME", "embeds_long_clip_seq_0324")
+            self.long_clip_embeds_test = torch.load(
+                os.path.join(folder, f"test_{embed_name}.pt"),map_location="cuda"
+            )
 
         self.test_loader = dataset.get_loader(split="test", batch_size=self.batch_size, shuffle=False, include_self=False)
 
