@@ -25,6 +25,7 @@ do
     --L_patch_len 2 \
     --base_patch 4 \
     --epochs 700 \
+    --n_runs 1 \
     --batch_size ${BS} \
     --lr ${LR} \
     --clip_cache_path "" \
