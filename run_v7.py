@@ -29,7 +29,7 @@ def train(training_stage, train_configs, model_diff_configs, model_cond_configs,
     elif training_stage == "finetune":
         if "attrs" in model_cond_configs.keys():
             model_cond_configs["attrs"]["num_attr_ops"] = dataset.num_attr_ops.tolist()
-        model = ConditionalGeneratorV7(model_diff_configs, model_cond_configs)
+        model = ConditionalGeneratorV7(model_diff_configs, model_cond_configs, train_configs["data"])
     else:
         raise Exception("Invalid training stage")
 
@@ -60,7 +60,7 @@ def evaluate(training_stage, eval_configs, model_diff_configs, model_cond_config
     elif training_stage == "finetune":
         if "attrs" in model_cond_configs.keys():
             model_cond_configs["attrs"]["num_attr_ops"] = dataset.num_attr_ops.tolist()
-        model = ConditionalGeneratorV7(model_diff_configs, model_cond_configs)
+        model = ConditionalGeneratorV7(model_diff_configs, model_cond_configs, eval_configs["data"])
     else:
         raise Exception("Invalid training stage")
 

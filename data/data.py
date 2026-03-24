@@ -538,7 +538,7 @@ class V7Split(Dataset):
         )
 
         self.ts, self.caps = ts, caps
-        self.caps_embed = caps_embed['embeddings'].cuda()
+        self.caps_embed = caps_embed['embeddings']
         self.n_samples = self.ts.shape[0]
         self.n_steps = self.ts.shape[1]
         self.time_point = np.arange(self.n_steps)
