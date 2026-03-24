@@ -35,12 +35,11 @@ class ClipTextEncoder(torch.nn.Module):
     def forward(self, text_list):
         inputs = self.tokenizer(
             text_list,
-            padding=True,
+            padding="max_length",  # ✅ 关键！
             truncation=True,
             max_length=self.max_length,
             return_tensors="pt"
         )
-
         input_ids = inputs["input_ids"].to(self.device)
 
         outputs = self.model(input_ids=input_ids)
