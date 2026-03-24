@@ -603,6 +603,7 @@ class V7Split(Dataset):
             "my_cap": my_cap,
             "my_cap_embed": self.caps_embed[cap_id],
             "tp": self.time_point.astype(np.float32),
+            "idx": idx
         }
 
     def __len__(self):
@@ -625,5 +626,5 @@ class V7Split(Dataset):
         out["cap"] = [b["cap"] for b in batch]
         out["my_caps"] = [b["my_cap"] for b in batch]
         out["my_cap_embed"] = torch.stack([b["my_cap_embed"] for b in batch])
-
+        out["indices"] = [b["idx"] for b in batch]
         return out

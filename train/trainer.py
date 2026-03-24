@@ -99,10 +99,11 @@ class Trainer:
 
 
     def _init_data(self, dataset):
-
         self.dataset = dataset
         if isinstance(self.dataset.dataset, data.data.V7Dataset):
-            breakpoint()
+            folder = self.dataset.configs['folder']
+            self.long_clip_embeds_train = torch.load(os.path.join(folder, "train_embeds_long_clip_seq.pt"), map_location="cuda")
+            self.long_clip_embeds_valid = torch.load(os.path.join(folder, "valid_embeds_long_clip_seq.pt"), map_location="cuda")
         # breakpoint()
         self.train_loader = dataset.get_loader(split="train", batch_size=self.batch_size, shuffle=True, include_self=True)
         self.valid_loader = dataset.get_loader(split="valid", batch_size=self.batch_size, shuffle=False, include_self=True)
@@ -140,6 +141,8 @@ class Trainer:
             for batch_no, train_batch in tqdm(enumerate(self.train_loader)):
                 self._global_batch_no += 1
                 self.opt.zero_grad()
+
+                breakpoint()
                 loss_dict = self.model(train_batch, is_train=True)
 
                 loss_dict["all"].backward()
