@@ -64,20 +64,13 @@ class CustomSplit(Dataset):
 
     def _load_data(self):
         ts = np.load(os.path.join(self.folder, self.split+"_ts.npy"))     # [n_samples, n_steps]
-        # attrs = np.load(os.path.join(self.folder, self.split+"_attrs_idx.npy"))  # [n_samples, n_attrs]
         caps = np.load(os.path.join(self.folder, self.split+fr"_text_caps.npy"), allow_pickle=True)
-        embed_0323 = torch.load(os.path.join(self.folder, self.split+fr"_embed_0323.npy"), weights_only=False)
+        # caps = np.load(os.path.join(self.folder, self.split+fr"_caps_0324.npy"), allow_pickle=True)
 
-        # verbalts_qwen_embed = torch.load(os.path.join(self.folder, self.split+fr"_verbalts_qwen_embeds.npy"), weights_only=False)
-        # verbalts_qwen_embed = verbalts_qwen_embed["embeddings"]
-
-        # self.ts, self.attrs, self.caps = ts, attrs, caps
-        self.ts, self.caps, self.embed_0323 = ts, caps, embed_0323
-        # self.verbalts_qwen_embed = verbalts_qwen_embed
+        self.ts, self.caps = ts, caps
 
         self.n_samples = self.ts.shape[0]
         self.n_steps = self.ts.shape[1]
-        # self.n_attrs = self.attrs.shape[1]
         self.time_point = np.arange(self.n_steps)
 
     def __getitem__(self, idx):
@@ -86,15 +79,9 @@ class CustomSplit(Dataset):
         if len(tmp_ts.shape) == 1:
             tmp_ts = tmp_ts[...,np.newaxis]
 
-        # cap_embed_0323 = self.embed_0323[f'image{idx}']
-        cap_embed_0323 = merge_single_image(self.embed_0323[f'image{idx}'])
-
         return {"ts": tmp_ts,
                 "ts_len": tmp_ts.shape[0],
-                # "verbal_qwen": self.verbalts_qwen_embed[cap_id],
-                # "attrs": self.attrs[idx],
                 "cap": self.caps[idx][cap_id],
-                "cap_0323_embed": cap_embed_0323,
                 "tp": self.time_point}
 
     def __len__(self):

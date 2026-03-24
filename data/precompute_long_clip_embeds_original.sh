@@ -10,7 +10,7 @@ SAVE_ROOT="/playpen-shared/haochenz/LitsDatasets/128_len_ts/synthetic_u"
 
 SCRIPT_PATH="precompute_long_clip_embeds.py"
 
-BATCH_SIZE=128
+BATCH_SIZE=512
 DEVICE="cuda"
 
 mkdir -p $SAVE_ROOT
