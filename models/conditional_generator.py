@@ -62,18 +62,28 @@ class ConditionalGenerator(nn.Module):
     """
     def forward(self, batch, is_train):
         x, tp, attrs = self._unpack_data_cond_gen(batch)
+        tic = time.time()
         attr_emb_raw = self.attr_en(attrs)
+        toc = time.time()
+        print("attr_en time : ", toc - tic)
         if self.cond_configs["cond_modal"] == "attr" or "diffstep" not in self.cond_configs["text"]["text_projector"]:
+            tic = time.time()
             attr_emb = self.cond_projector(attr_emb_raw)
-
+            toc = time.time()
+            print("attr_emb time: ", toc - tic)
         B = x.shape[0]
         if is_train:
             t = torch.randint(0, self.generator.num_steps, [B], device=self.device)
             if "text" in self.cond_configs["cond_modal"] and "diffstep" in self.cond_configs["text"]["text_projector"]:
+                tic =time.time()
                 attr_emb = self.cond_projector(attr_emb_raw, t)
-
+                toc = time.time()
+                print("attr_emb time: ", toc - tic)
             # breakpoint()
+            tic = time.time()
             loss = self.generator._noise_estimation_loss(x, tp, attr_emb, t)
+            toc = time.time()
+            print("Generator noise estimation loss: ", toc - tic)
             return loss
         
         loss_dict = {}

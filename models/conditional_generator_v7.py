@@ -62,7 +62,10 @@ class ConditionalGeneratorV7(nn.Module):
     """
     def forward(self, batch, is_train):
         x, tp, attrs = self._unpack_data_cond_gen(batch)
+        tic = time.time()
         attr_emb_raw = self.attr_en(attrs)
+        toc = time.time()
+        print("Attr emb raw time: ", toc - tic)
         if self.cond_configs["cond_modal"] == "attr" or "diffstep" not in self.cond_configs["text"]["text_projector"]:
             tic = time.time()
             attr_emb = self.cond_projector(attr_emb_raw)
