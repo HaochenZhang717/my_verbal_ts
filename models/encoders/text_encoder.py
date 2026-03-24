@@ -142,3 +142,22 @@ class CLIPTextEncoderV6(nn.Module):
     def forward(self, text_embed):
         text_co_emb = self.text_enc(text_embed)
         return text_co_emb
+
+
+class CLIPTextEncoderV7(nn.Module):
+    def __init__(self, configs):
+        super().__init__()
+        self.configs = configs
+        self.device = configs["device"]
+        self.emb_dim = configs["text_emb"]
+
+        self.text_enc = nn.Sequential(
+            nn.Linear(configs["pretrain_model_dim"], configs["textemb_hidden_dim"]),
+            nn.LayerNorm(configs["textemb_hidden_dim"]),
+            nn.LeakyReLU(0.2, inplace=True),
+            nn.Linear(configs["textemb_hidden_dim"], configs["text_emb"])
+        )
+
+    def forward(self, attr_embed_raw):
+        text_co_emb = self.text_enc(attr_embed_raw)
+        return text_co_emb

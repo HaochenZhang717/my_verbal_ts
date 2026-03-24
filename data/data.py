@@ -624,5 +624,6 @@ class V7Split(Dataset):
         # ===== string部分（保持list）=====
         out["cap"] = [b["cap"] for b in batch]
         out["my_caps"] = [b["my_cap"] for b in batch]
+        out["my_cap_embed"] = torch.stack([b["my_cap_embed"] for b in batch])
 
         return out

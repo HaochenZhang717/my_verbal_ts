@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 
 from models.encoders.attr_encoder import AttributeEncoder
-from models.encoders.text_encoder import TextEncoder, CLIPTextEncoder
+from models.encoders.text_encoder import TextEncoder, CLIPTextEncoderV7
 from models.encoders.cond_projector import TextProjectorMVarMScaleMStep, AttrProjectorAvg
 from models.unconditional_generator import UnConditionalGenerator
 from models.cttp.cttp_model import CTTP
@@ -33,7 +33,7 @@ class ConditionalGeneratorV7(nn.Module):
         elif "text" in cond_configs["cond_modal"]:
             if cond_configs["cond_modal"] == "text":
                 cond_configs["text"]["device"] = self.device
-                self.attr_en = CLIPTextEncoder(cond_configs["text"]).to(self.device)
+                self.attr_en = CLIPTextEncoderV7(cond_configs["text"]).to(self.device)
             elif cond_configs["cond_modal"] == "simple_text":
                 cond_configs["text"]["device"] = self.device
                 self.attr_en = TextEncoder(cond_configs["text"]).to(self.device)
@@ -116,7 +116,7 @@ class ConditionalGeneratorV7(nn.Module):
         #     attrs = batch["attrs"].to(self.device).long()
         ts = ts.permute(0, 2, 1)
 
-        return ts, tp, batch["my_caps"]
+        return ts, tp, batch["my_caps_embed"].to(self.device).float()
 
     def generate(self, batch, n_samples, sampler="ddim"):
         if self.cond_configs["cond_modal"] == "constraint":
