@@ -161,7 +161,7 @@ def precompute_from_npy(
         # batch_text = caps[i:i + batch_size]
         embeds, attn_masks = encoder(batch_text)  # (B, L, D)
         all_embeds.append(embeds.cpu())
-        all_masks.append(attn_masks)
+        all_masks.append(attn_masks.cpu())
 
     # =========================
     # 拼成 (N, L, D)
@@ -172,7 +172,7 @@ def precompute_from_npy(
     # 保存
     # =========================
     # torch.save(all_embeds, save_path)
-    breakpoint()
+
     torch.save({
         "embeddings": all_embeds,  # (N, L, D)
         "ids": all_masks
