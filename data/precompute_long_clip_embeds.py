@@ -3,39 +3,71 @@ import json
 import torch
 import argparse
 from tqdm import tqdm
-from transformers import AutoTokenizer, AutoModel
+from transformers import AutoTokenizer, CLIPTextModelWithProjection
 
-from transformers import AutoTokenizer, CLIPTextModelWithProjection, CLIPTextConfig
 
 # =========================
-# Qwen encoder（无 projector）
+# CLIP Text Encoder
 # =========================
 class ClipTextEncoder(torch.nn.Module):
     def __init__(self, device):
         super().__init__()
         self.device = device
 
-        clip_config = CLIPTextConfig.from_pretrained("/playpen-shared/haochenz/long_clip")
-        clip_config.max_position_embeddings = 248
-        self.model = CLIPTextModelWithProjection.from_pretrained(
-            "/playpen-shared/haochenz/long_clip",
-            config=clip_config
+        model_path = "/playpen-shared/haochenz/long_clip"
+
+        self.model = CLIPTextModelWithProjection.from_pretrained(model_path)
+        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
+
+        # 正确 max length
+        self.max_length = min(
+            self.model.config.max_position_embeddings,
+            self.tokenizer.model_max_length
         )
-        self.tokenizer = AutoTokenizer.from_pretrained("/playpen-shared/haochenz/long_clip")
 
         for p in self.model.parameters():
             p.requires_grad = False
 
+        self.model.eval()
+
     @torch.no_grad()
-    def forward(self, text):
+    def forward(self, text_list):
         inputs = self.tokenizer(
-            text, padding=True, truncation=True,
+            text_list,
+            padding=True,
+            truncation=True,
             max_length=self.max_length,
-            return_tensors="pt")["input_ids"]
-        inputs = inputs.to(self.device)
-        text_emb = self.model(input_ids=inputs).last_hidden_state
+            return_tensors="pt"
+        )
+
+        input_ids = inputs["input_ids"].to(self.device)
+
+        outputs = self.model(input_ids=input_ids)
+        text_emb = outputs.last_hidden_state  # (B, L, D)
 
         return text_emb
+
+
+# =========================
+# merge captions
+# =========================
+def merge_caps(caps_list):
+    """
+    caps_list:
+    [
+        {'seg1_channel0': '...'},
+        {'seg2_channel0': '...'},
+        ...
+    ]
+
+    → single string
+    """
+    merged = []
+    for d in caps_list:
+        for k, v in d.items():
+            merged.append(f"{k}: {v}")
+
+    return "\n".join(merged)
 
 
 # =========================
@@ -61,59 +93,47 @@ def precompute(
 
     encoder = ClipTextEncoder(device).to(device)
 
-    result = {}
+    all_texts = []
+    image_ids = []
 
     # =========================
-    # 遍历每个 sample
+    # 先把所有 caption merge
     # =========================
-    for image_id in tqdm(caps_dict.keys()):
+    for image_id in caps_dict:
+        caps_list = caps_dict[image_id]
+        merged_text = merge_caps(caps_list)
 
-        caps_list = caps_dict[image_id]  # list of dicts
+        all_texts.append(merged_text)
+        image_ids.append(image_id)
 
-        # flatten这个sample内部
-        keys = []
-        texts = []
+    print("Start encoding...")
 
-        for d in caps_list:
-            for k, v in d.items():
-                keys.append(k)     # segX_channelY
-                texts.append(v)
+    all_embeds = []
 
-        # =========================
-        # batch encode
-        # =========================
-        embeds_all = []
+    # =========================
+    # batch encode
+    # =========================
+    for i in tqdm(range(0, len(all_texts), batch_size)):
+        batch_text = all_texts[i:i + batch_size]
+        embeds = encoder(batch_text)  # (B, L, D)
+        all_embeds.append(embeds.cpu())
+        breakpoint()
 
-        for i in range(0, len(texts), batch_size):
-            batch_text = texts[i:i + batch_size]
-            breakpoint()
-            embeds = encoder(batch_text)  # (b, L, 1024)
-            print(embeds.shape)
-            breakpoint()
-            embeds_all.append(embeds.cpu())
-
-        embeds_all = torch.cat(embeds_all, dim=0)
-
-        # =========================
-        # 存回 dict
-        # =========================
-        result[image_id] = {}
-
-        for i, k in enumerate(keys):
-            result[image_id][k] = embeds_all[i]  # (L, D)
+    # =========================
+    # 拼成 (N, L, D)
+    # =========================
+    all_embeds = torch.cat(all_embeds, dim=0)  # (N, L, D)
 
     # =========================
     # 保存
     # =========================
-    torch.save(result, save_path)
+    torch.save({
+        "embeddings": all_embeds,   # (N, L, D)
+        "ids": image_ids
+    }, save_path)
 
     print(f"Saved to {save_path}")
-
-    # debug
-    example = list(result.keys())[0]
-    print("Example:", example)
-    print("Keys:", result[example].keys())
-    print("Shape:", list(result[example].values())[0].shape)
+    print("Shape:", all_embeds.shape)
 
 
 # =========================
