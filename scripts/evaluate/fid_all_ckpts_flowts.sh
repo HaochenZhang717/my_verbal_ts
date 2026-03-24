@@ -11,7 +11,7 @@ REAL_PATH="/playpen/haochenz/oldsweep/synth_u_qwen_v1/lr_1e-3_bs_128-L10C128H8D1
 SAMPLE_DIR='/playpen-shared/haochenz/flowts_neurips_baseline/synthu/LR0.0001-BS$128'
 
 
-SAVE_FILE="./fid_results/synth_u_flowts.txt"
+SAVE_FILE="../fid_results/synth_u_flowts.txt"
 
 mkdir -p ./fid_results
 
