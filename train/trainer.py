@@ -184,7 +184,9 @@ class Trainer:
             for batch_no, valid_batch in enumerate(self.valid_loader):
                 if hasattr(self, "long_clip_embeds_valid"):
                     # valid_batch["my_cap_embed"] = self.long_clip_embeds_train["embeddings"][valid_batch["indices"]]
-                    valid_batch["my_cap_embed"] = self.long_clip_embeds_train[valid_batch["indices"]]
+                    valid_batch["my_cap_embed"] = self.long_clip_embeds_train["embeddings"][valid_batch["indices"]]
+                    valid_batch["my_cap_embed_mask"] = self.long_clip_embeds_train["all_masks"][valid_batch["indices"]]
+
                 loss_dict = self.ema_model(valid_batch, is_train=False)
                 avg_loss_valid += loss_dict["all"].item()
 

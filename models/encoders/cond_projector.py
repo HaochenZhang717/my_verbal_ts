@@ -20,19 +20,34 @@ class TextProjectorMVarMScaleMStep(nn.Module):
         self.step_cross_attn = nn.TransformerDecoder(step_cross_attn_layer, num_layers=2)
         self.proj_out = nn.Linear(self.dim_in, self.dim_out)
 
-    def forward(self, attr, diffusion_step):
+    def forward(self, attr, diffusion_step, attention_mask=None):
         # attr.shape == (batch_size, seq_len, dim)
         B = attr.shape[0]
+
+        memory_key_padding_mask = None
+        if attention_mask is not None:
+            memory_key_padding_mask = (attention_mask == 0)  # True means masked
+            attr = attr * attention_mask.unsqueeze(-1)
+
         var_emb = self.var_emb.expand([B,-1,-1]) # (B, n_var, dim_in)
-        mvar_attr = self.var_cross_attn(tgt=var_emb, memory=attr) # (B, n_var, dim_in)
+        mvar_attr = self.var_cross_attn(
+            tgt=var_emb, memory=attr,
+            memory_key_padding_mask=memory_key_padding_mask
+        ) # (B, n_var, dim_in)
         mvar_attr = mvar_attr[:,:,None,:] # (B, n_var, 1, dim_in)
 
         scale_emb = self.scale_emb.expand([B,-1,-1])
-        mscale_attr = self.scale_cross_attn(tgt=scale_emb, memory=attr)
+        mscale_attr = self.scale_cross_attn(
+            tgt=scale_emb, memory=attr,
+            memory_key_padding_mask=memory_key_padding_mask
+        )
         mscale_attr = mscale_attr[:,None,:,:].expand([-1,self.n_var,-1,-1]) # (B, 1, n_scale, dim_in)
 
         step_emb = self.step_emb.expand([B,-1,-1])
-        mstep_attr = self.step_cross_attn(tgt=step_emb, memory=attr)
+        mstep_attr = self.step_cross_attn(
+            tgt=step_emb, memory=attr,
+            memory_key_padding_mask=memory_key_padding_mask
+        )
         indices = diffusion_step // self.seg_size
         indices = indices[:,None,None]
         mstep_attr = torch.gather(mstep_attr, dim=1, index=indices.expand([-1, -1, mstep_attr.shape[-1]]))
