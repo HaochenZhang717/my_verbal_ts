@@ -55,7 +55,7 @@ do
 
     export WANDB_NAME="vae_cond"
 
-    CUDA_VISIBLE_DEVICES=7 python run_vae_cond.py \
+    CUDA_VISIBLE_DEVICES=4 python run_vae_cond.py \
         --cond_modal vae_embed \
         --training_stage finetune \
         --save_folder ./sweep/synth_u/vae_cond \
