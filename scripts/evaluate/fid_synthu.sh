@@ -21,8 +21,8 @@ export CUDA_VISIBLE_DEVICES=1
 
 
 
-REAL_PATH="/playpen-shared/haochenz/my_verbal_ts/sweep_text2ts/synth_u/orig_verbalts_orig_cap_precompute_embed-lr1e-3_bs512_multistep/0/samples.pt"
-FAKE_PATH="/playpen-shared/haochenz/my_verbal_ts/sweep_text2ts/synth_u/orig_verbalts_orig_cap_precompute_embed-lr1e-3_bs512_multistep/0/samples.pt"
+REAL_PATH="/playpen-shared/haochenz/sweep_text2ts/synth_u/orig_verbalts_orig_cap_precompute_embed-lr1e-3_bs512_multistep/0/samples.pt"
+FAKE_PATH="/playpen-shared/haochenz/sweep_text2ts/synth_u/orig_verbalts_orig_cap_precompute_embed-lr1e-3_bs512_multistep/0/samples.pt"
 
 python calculate_fid.py \
     --real_path ${REAL_PATH} \
