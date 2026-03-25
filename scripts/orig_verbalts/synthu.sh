@@ -10,7 +10,7 @@ do
     echo "Running lr=$LR bs=$BS"
 
 #    export WANDB_NAME="orig_verbalts_orig_cap-lr${LR}_bs${BS}"
-#    export WANDB_NAME="orig_verbalts_cap0324-lr${LR}_bs${BS}"
+    export WANDB_NAME="orig_verbalts_cap0324-lr${LR}_bs${BS}"
 
     CUDA_VISIBLE_DEVICES=4 python run.py \
     --cond_modal text \
@@ -28,7 +28,7 @@ do
     --epochs 700 \
     --batch_size ${BS} \
     --lr ${LR} \
-    --n_runs 1 \
+    --n_runs 3 \
     --clip_cache_path "" \
     --samples_name "samples.pt"
 done
