@@ -42,6 +42,7 @@ do
         --save_path "tmp.txt" \
         --num_samples 2850
     )
+    echo ${result}
 
 #    result=python calculate_fid.py \
 #              --real_path ${REAL_PATH} \
