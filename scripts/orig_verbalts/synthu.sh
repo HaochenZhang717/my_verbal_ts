@@ -30,6 +30,7 @@ do
     --lr ${LR} \
     --n_runs 3 \
     --clip_cache_path "" \
-    --samples_name "samples.pt"
+    --samples_name "samples.pt" \
+    --only_evaluate True
 done
 done
