@@ -8,8 +8,8 @@ export CUDA_VISIBLE_DEVICES=6
 
 # 👉 必须是真实数据（GT）
 REAL_PATH="/playpen/haochenz/oldsweep/synth_u_qwen_v1/lr_1e-3_bs_128-L10C128H8D128-dropout0.1-cfg0.1/0/real_text_samples_model_epoch_2499.pt"
-SAMPLE_DIR="/playpen/haochenz/oldsweep/synth_u_qwen_v1/lr_1e-3_bs_128-L10C128H8D128-dropout0.1-cfg0.1/0"
-#SAMPLE_DIR="/playpen/haochenz/VerbalTS_reimplement/sweep/synth_u_qwen_v1/lr_1e-3_bs_128/0"
+#SAMPLE_DIR="/playpen/haochenz/oldsweep/synth_u_qwen_v1/lr_1e-3_bs_128-L10C128H8D128-dropout0.1-cfg0.1/0"
+SAMPLE_DIR="/playpen/haochenz/VerbalTS_reimplement/sweep/synth_u_qwen_v1/lr_1e-3_bs_128/0"
 
 SAVE_FILE="./fid_results/synth_u_qwen_v1_generation_lr_1e-3_bs_128-L10C128H8D128-dropout0.1-cfg0.1.txt"
 
