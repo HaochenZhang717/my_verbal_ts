@@ -13,7 +13,6 @@ do
     echo "Running lr=$LR bs=$BS"
 
     export WANDB_NAME="orig_verbalts_orig_cap_precompute_embed-lr${LR}_bs${BS}_multistep"
-
     CUDA_VISIBLE_DEVICES=4 python run_v7.py \
     --cond_modal text \
     --training_stage finetune \
