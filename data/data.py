@@ -383,9 +383,9 @@ class QwenV3Split(Dataset):
 
 
         self.vae_embed = None
-        # if vae_embed_path != "none":
-        #     self.vae_embed = np.load(f"{vae_embed_path}/{split}_vae.npy", allow_pickle=True)
-        #     self.vae_embed = torch.from_numpy(self.vae_embed)
+        if vae_embed_path != "none":
+            self.vae_embed = np.load(f"{vae_embed_path}/{split}_vae.npy", allow_pickle=True)
+            self.vae_embed = torch.from_numpy(self.vae_embed)
 
 
         self.caps = None
