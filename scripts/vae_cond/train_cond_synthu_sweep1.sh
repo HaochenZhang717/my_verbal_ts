@@ -56,7 +56,7 @@ do
     export WANDB_NAME="vae_cond"
 
     CUDA_VISIBLE_DEVICES=7 python run_vae_cond.py \
-        --cond_modal text \
+        --cond_modal vae_embed \
         --training_stage finetune \
         --save_folder ./sweep/synth_u/vae_cond \
         --model_diff_config_path configs/synth_u_vae_cond/diff/model_text2ts_dep.yaml \
