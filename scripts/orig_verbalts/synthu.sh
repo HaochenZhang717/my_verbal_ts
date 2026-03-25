@@ -12,7 +12,7 @@ do
 #    export WANDB_NAME="orig_verbalts_orig_cap-lr${LR}_bs${BS}"
     export WANDB_NAME="orig_verbalts_cap0324-lr${LR}_bs${BS}"
 
-    CUDA_VISIBLE_DEVICES=4 python run.py \
+    CUDA_VISIBLE_DEVICES=0 python run.py \
     --cond_modal text \
     --training_stage finetune \
     --save_folder ../sweep_text2ts/synth_u/orig_verbalts_orig_cap \
