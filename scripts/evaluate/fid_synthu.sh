@@ -113,7 +113,7 @@ FAKE_PATH="/playpen/haochenz/VerbalTS_reimplement/verbalts_orig_save/synth_u/tex
 python calculate_fid.py \
     --real_path ${REAL_PATH} \
     --fake_path ${FAKE_PATH} \
-    --ckpt_path "./fid_vae_ckpts/vae_synth_u/best.pt" \
+    --ckpt_path "../fid_vae_ckpts/vae_synth_u/best.pt" \
     --batch_size 128 \
     --hidden_size 128 \
     --num_layers 2 \
