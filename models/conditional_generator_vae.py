@@ -82,6 +82,7 @@ class ConditionalGeneratorVAE(nn.Module):
         B, C, T = ts.shape
         tp = torch.arange(T).repeat(B, 1).to(self.device).float()
         vae_embeds = batch["vae_embeds"].to(self.device).float() if batch["vae_embeds"] is not None else None
+        breakpoint()
         return ts, tp, vae_embeds
 
     def generate(self, batch, n_samples, sampler="ddim"):
