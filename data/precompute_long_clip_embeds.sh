@@ -9,7 +9,7 @@ CAPS_PATH="/playpen-shared/haochenz/LitsDatasets/128_len_ts/synthetic_u"
 SAVE_ROOT="/playpen-shared/haochenz/LitsDatasets/128_len_ts/synthetic_u"
 
 SCRIPT_PATH="precompute_long_clip_embeds.py"
-NPY_NAME="text_caps_0324"
+NPY_NAME="caps_0324"
 
 BATCH_SIZE=128
 DEVICE="cuda"
