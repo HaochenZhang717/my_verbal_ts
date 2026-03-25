@@ -10,7 +10,7 @@ do
     echo "Running lr=$LR bs=$BS"
 
 #    export WANDB_NAME="orig_verbalts_orig_cap-lr${LR}_bs${BS}"
-    export WANDB_NAME="orig_verbalts_cap0324-lr${LR}_bs${BS}"
+#    export WANDB_NAME="orig_verbalts_cap0324-lr${LR}_bs${BS}"
 
     CUDA_VISIBLE_DEVICES=4 python run.py \
     --cond_modal text \
