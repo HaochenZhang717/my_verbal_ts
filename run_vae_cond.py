@@ -101,12 +101,6 @@ def run(training_stage, train_configs, eval_configs, model_diff_configs, model_c
         _, samples = evaluate(training_stage, eval_configs, model_diff_configs, model_cond_configs, output_folder)
         torch.save(samples, os.path.join(output_folder, args.samples_name))
 
-# eval_configs["data"]["folder"] = data_folder
-    # df, samples = evaluate(training_stage, eval_configs, model_diff_configs, model_cond_configs, output_folder)
-    # path = os.path.join(output_folder, "results.csv")
-    # df.to_csv(path)
-    # torch.save(samples, os.path.join(output_folder, args.samples_name))
-    # return df
 
 ##### Arguments #####
 parser = argparse.ArgumentParser(description="TSE")
