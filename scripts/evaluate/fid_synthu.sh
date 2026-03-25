@@ -127,8 +127,8 @@ export CUDA_VISIBLE_DEVICES=1
 #    --save_path "./fid_results/uncond_generation.txt"
 
 
-REAL_PATH="/playpen/haochenz/VerbalTS_reimplement/verbalts_orig_save/synth_u/text2ts_msmdiffmv/2/verbalts_caps_samples.pt"
-FAKE_PATH="/playpen/haochenz/VerbalTS_reimplement/verbalts_orig_save/synth_u/text2ts_msmdiffmv/2/verbalts_caps_samples.pt"
+REAL_PATH="/playpen/haochenz/VerbalTS_reimplement/verbalts_orig_save/synth_u/text2ts_msmdiffmv/1/verbalts_caps_samples.pt"
+FAKE_PATH="/playpen/haochenz/VerbalTS_reimplement/verbalts_orig_save/synth_u/text2ts_msmdiffmv/1/verbalts_caps_samples.pt"
 python calculate_fid.py \
     --real_path ${REAL_PATH} \
     --fake_path ${FAKE_PATH} \
