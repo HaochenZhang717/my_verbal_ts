@@ -30,30 +30,30 @@ do
     echo "Evaluating: ${sample_name}"
     echo "======================================"
 
-#    result=$(python calculate_fid.py \
-#        --real_path ${REAL_PATH} \
-#        --fake_path ${sample_path} \
-#        --ckpt_path "../fid_vae_ckpts/vae_synth_u/best.pt" \
-#        --batch_size 128 \
-#        --hidden_size 128 \
-#        --num_layers 2 \
-#        --num_heads 8 \
-#        --latent_dim 64 \
-#        --save_path "tmp.txt" \
-#        --num_samples 2850
-#    )
+    result=$(python calculate_fid.py \
+        --real_path ${REAL_PATH} \
+        --fake_path ${sample_path} \
+        --ckpt_path "../fid_vae_ckpts/vae_synth_u/best.pt" \
+        --batch_size 128 \
+        --hidden_size 128 \
+        --num_layers 2 \
+        --num_heads 8 \
+        --latent_dim 64 \
+        --save_path "tmp.txt" \
+        --num_samples 2850
+    )
 
-    result=python calculate_fid.py \
-              --real_path ${REAL_PATH} \
-              --fake_path ${sample_path} \
-              --ckpt_path "../fid_vae_ckpts/vae_synth_u/best.pt" \
-              --batch_size 128 \
-              --hidden_size 128 \
-              --num_layers 2 \
-              --num_heads 8 \
-              --latent_dim 64 \
-              --save_path "tmp.txt" \
-              --num_samples 2850
+#    result=python calculate_fid.py \
+#              --real_path ${REAL_PATH} \
+#              --fake_path ${sample_path} \
+#              --ckpt_path "../fid_vae_ckpts/vae_synth_u/best.pt" \
+#              --batch_size 128 \
+#              --hidden_size 128 \
+#              --num_layers 2 \
+#              --num_heads 8 \
+#              --latent_dim 64 \
+#              --save_path "tmp.txt" \
+#              --num_samples 2850
 
     echo "${sample_name}" >> ${SAVE_FILE}
     echo "${result}" >> ${SAVE_FILE}
