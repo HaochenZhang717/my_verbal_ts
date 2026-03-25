@@ -4,6 +4,7 @@ LR_LIST=(1e-3)
 BS_LIST=(512)
 
 export SCHEDULER=MULTISTEP
+export EMBED_NAME=embeds_long_clip_seq_0324
 
 for LR in "${LR_LIST[@]}"
 do
