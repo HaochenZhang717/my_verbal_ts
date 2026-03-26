@@ -4,6 +4,7 @@ import torch
 import argparse
 from tqdm import tqdm
 from transformers import AutoTokenizer, AutoModel
+import numpy as np
 
 
 # =========================
@@ -29,8 +30,7 @@ class QwenTextEncoder(torch.nn.Module):
     def forward(self, texts):
         batch = self.tokenizer(
             texts,
-            padding="max_length",
-            max_length=40,
+            padding=True,
             return_tensors="pt"
         )
         batch = {k: v.to(self.device) for k, v in batch.items()}
@@ -53,70 +53,26 @@ def precompute(
     print("Loading captions...")
 
     caps_dict = {}
-    with open(f"{caps_path}/{split}_caps_ready.jsonl", "r") as f:
-        for line in f:
-            item = json.loads(line)
-            caps_dict[item["id"]] = item["captions"]
+    all_caps = np.load(f"{caps_path}/{split}_caps_0324.npy", allow_pickle=True)
 
-    print(f"Loaded {len(caps_dict)} samples")
+    print(f"Loaded {len(all_caps)} samples")
 
     encoder = QwenTextEncoder(device).to(device)
+    embeds_all = []
+    for i in range(0, len(all_caps), batch_size):
+        batch_text = torch.from_numpy(all_caps[i:i + batch_size]).to(device)
+        embeds = encoder(batch_text)  # (b, L, 1024)
+        embeds_all.append(embeds.cpu())
 
-    result = {}
-
-    # =========================
-    # 遍历每个 sample
-    # =========================
-    for image_id in tqdm(caps_dict.keys()):
-
-        caps_list = caps_dict[image_id]  # list of dicts
-
-        # flatten这个sample内部
-        keys = []
-        texts = []
-
-        for d in caps_list:
-            for k, v in d.items():
-                keys.append(k)     # segX_channelY
-                texts.append(v)
-
-        # =========================
-        # batch encode
-        # =========================
-        embeds_all = []
-
-        for i in range(0, len(texts), batch_size):
-            batch_text = texts[i:i + batch_size]
-            embeds = encoder(batch_text)  # (b, L, 1024)
-            embeds_all.append(embeds.cpu())
-
-        embeds_all = torch.cat(embeds_all, dim=0)
-
-        # =========================
-        # 存回 dict
-        # =========================
-        result[image_id] = {}
-
-        for i, k in enumerate(keys):
-            result[image_id][k] = embeds_all[i]  # (L, D)
-
+    embeds_all = torch.cat(embeds_all, dim=0)
+    breakpoint()
     # =========================
     # 保存
     # =========================
-    torch.save(result, save_path)
+    torch.save(embeds_all, save_path)
 
     print(f"Saved to {save_path}")
 
-    # debug
-    example = list(result.keys())[0]
-    print("Example:", example)
-    print("Keys:", result[example].keys())
-    print("Shape:", list(result[example].values())[0].shape)
-
-
-# =========================
-# CLI
-# =========================
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 

@@ -6,8 +6,11 @@
 export CUDA_VISIBLE_DEVICES=7
 export HF_HOME=/playpen/haochenz/hf_cache
 
-CAPS_PATH="/playpen-shared/haochenz/LitsDatasets/128_len_caps_one_per_channel_0309/synth_u"
-SAVE_ROOT="/playpen-shared/haochenz/LitsDatasets/128_len_caps_one_per_channel_0309/synth_u"
+#CAPS_PATH="/playpen-shared/haochenz/LitsDatasets/128_len_caps_one_per_channel_0309/synth_u"
+#SAVE_ROOT="/playpen-shared/haochenz/LitsDatasets/128_len_caps_one_per_channel_0309/synth_u"
+
+CAPS_PATH="/playpen-shared/haochenz/LitsDatasets/128_len_caps_one_per_image_0324/synth_u"
+SAVE_ROOT="/playpen-shared/haochenz/LitsDatasets/128_len_caps_one_per_image_0324/synth_u"
 
 SCRIPT_PATH="precompute_qwen_embeds.py"
 
