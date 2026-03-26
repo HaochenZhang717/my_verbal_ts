@@ -61,7 +61,8 @@ def precompute(
     encoder = QwenTextEncoder(device).to(device)
     embeds_all = []
     for i in range(0, len(all_caps), batch_size):
-        batch_text = torch.from_numpy(all_caps[i:i + batch_size]).to(device)
+
+        batch_text = all_caps[i:i + batch_size]
         embeds = encoder(batch_text)  # (b, L, 1024)
         embeds_all.append(embeds.cpu())
 
