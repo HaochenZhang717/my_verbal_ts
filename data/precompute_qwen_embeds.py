@@ -7,6 +7,17 @@ from transformers import AutoTokenizer, AutoModel
 import numpy as np
 
 
+
+def last_token_pool(last_hidden_states, attention_mask):
+    left_padding = (attention_mask[:, -1].sum() == attention_mask.shape[0])
+    if left_padding:
+        return last_hidden_states[:, -1]
+    else:
+        sequence_lengths = attention_mask.sum(dim=1) - 1
+        batch_size = last_hidden_states.shape[0]
+        return last_hidden_states[torch.arange(batch_size, device=last_hidden_states.device), sequence_lengths]
+
+
 # =========================
 # Qwen encoder（无 projector）
 # =========================
@@ -36,8 +47,10 @@ class QwenTextEncoder(torch.nn.Module):
         batch = {k: v.to(self.device) for k, v in batch.items()}
 
         outputs = self.model(**batch)  # (B, L, 1024)
+        embeddings = last_token_pool(outputs.last_hidden_state, batch['attention_mask'])
+        embeddings = torch.nn.functional.normalize(embeddings, p=2, dim=1)
         breakpoint()
-        return outputs
+        return embeddings
 
 
 # =========================
