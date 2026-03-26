@@ -9,7 +9,7 @@ export HF_HOME=/playpen/haochenz/hf_cache
 #CAPS_PATH="/playpen-shared/haochenz/LitsDatasets/128_len_caps_one_per_channel_0309/synth_u"
 #SAVE_ROOT="/playpen-shared/haochenz/LitsDatasets/128_len_caps_one_per_channel_0309/synth_u"
 
-CAPS_PATH="/playpen-shared/haochenz/LitsDatasets/128_len_ts/synth_u"
+CAPS_PATH="/playpen-shared/haochenz/LitsDatasets/128_len_ts/synthetic_u"
 SAVE_ROOT="/playpen-shared/haochenz/LitsDatasets/128_len_ts/synth_u"
 
 SCRIPT_PATH="precompute_qwen_embeds.py"
