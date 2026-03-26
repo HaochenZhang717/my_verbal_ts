@@ -3,7 +3,7 @@
 # =========================
 # CONFIG
 # =========================
-export CUDA_VISIBLE_DEVICES=0
+export CUDA_VISIBLE_DEVICES=3
 export HF_HOME=/playpen/haochenz/hf_cache
 
 CAPS_PATH="/playpen-shared/haochenz/LitsDatasets/128_len_ts/synthetic_u"
