@@ -35,7 +35,8 @@ class QwenTextEncoder(torch.nn.Module):
         )
         batch = {k: v.to(self.device) for k, v in batch.items()}
 
-        outputs = self.model(**batch).last_hidden_state  # (B, L, 1024)
+        outputs = self.model(**batch)  # (B, L, 1024)
+        breakpoint()
         return outputs
 
 
