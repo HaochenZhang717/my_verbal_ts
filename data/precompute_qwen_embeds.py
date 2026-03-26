@@ -49,7 +49,6 @@ class QwenTextEncoder(torch.nn.Module):
         outputs = self.model(**batch)  # (B, L, 1024)
         embeddings = last_token_pool(outputs.last_hidden_state, batch['attention_mask'])
         embeddings = torch.nn.functional.normalize(embeddings, p=2, dim=1)
-        breakpoint()
         return embeddings
 
 
