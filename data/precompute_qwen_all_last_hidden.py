@@ -79,15 +79,13 @@ def precompute(
         embeds, masks = encoder(batch_text)  # (b, L, 1024)
         embeds_all.append(embeds.cpu())
         masks_all.append(masks.cpu())
-        breakpoint()
     embeds_all = torch.cat(embeds_all, dim=0)
     masks_all = torch.cat(masks_all, dim=0)
 
-    breakpoint()
     # =========================
     # 保存
     # =========================
-    torch.save(embeds_all, save_path)
+    torch.save({"embeds_all": embeds_all, "masks_all": masks_all}, save_path)
 
     print(f"Saved to {save_path}")
 
