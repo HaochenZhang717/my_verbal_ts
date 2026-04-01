@@ -286,10 +286,16 @@ def train(args):
 # Evaluate
 # =========================
 
+import os
+
 @torch.no_grad()
 def evaluate_and_plot(args, num_samples=5):
 
     device = args.device if torch.cuda.is_available() else "cpu"
+
+    # ===== save dir =====
+    plot_dir = os.path.join(args.save_dir, "plots")
+    os.makedirs(plot_dir, exist_ok=True)
 
     # ===== dataset =====
     dataset = load_dataset(args.val_path)
@@ -316,14 +322,13 @@ def evaluate_and_plot(args, num_samples=5):
     model.load_state_dict(torch.load(ckpt_path, map_location=device))
     model.eval()
 
-    # ===== iterate dataloader =====
+    # ===== iterate =====
     for i, batch in enumerate(loader):
 
         if i >= num_samples:
             break
 
-        x = batch[0].to(device)  # [1, L, C]
-
+        x = batch[0].to(device)
         out = model(x)
 
         x_np = x.squeeze(0).cpu().numpy()
@@ -355,7 +360,7 @@ def evaluate_and_plot(args, num_samples=5):
             plt.legend()
             plt.title("Decomposition")
 
-            # --- reconstruction components ---
+            # --- reconstruction ---
             plt.subplot(4, 1, 3)
             plt.plot(recon_low[:, c], label="recon_low")
             plt.plot(recon_mid[:, c], label="recon_mid")
@@ -371,7 +376,12 @@ def evaluate_and_plot(args, num_samples=5):
             plt.title("Total Reconstruction")
 
             plt.tight_layout()
-            plt.show()
+
+            # ===== save =====
+            save_path = os.path.join(plot_dir, f"sample_{i}_channel_{c}.png")
+            plt.savefig(save_path)
+
+            plt.close()  # 🔥 必须！
 
 # =========================
 if __name__ == "__main__":
