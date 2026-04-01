@@ -88,13 +88,13 @@ COMMON_ARGS="\
 # Train
 # =========================
 echo "🚀 Starting training..."
-#python train_multiscale_vae.py ${COMMON_ARGS}
+python train_multiscale_vae.py ${COMMON_ARGS}
 
 # =========================
 # Eval
 # =========================
-echo "📊 Running evaluation..."
-python train_multiscale_vae.py \
-    ${COMMON_ARGS} \
-    --eval_only \
-    --num_plot_samples 10
+#echo "📊 Running evaluation..."
+#python train_multiscale_vae.py \
+#    ${COMMON_ARGS} \
+#    --eval_only \
+#    --num_plot_samples 10

@@ -229,8 +229,6 @@ class series_decomp_multi(nn.Module):
         return moving_mean, seasonal, high_frequency
 
 
-
-
 class SymmetricFusion(nn.Module):
     def __init__(self, z_channels):
         super().__init__()
@@ -533,13 +531,6 @@ class DualVAE(nn.Module):
             self.decode_from_latent(z_low_freq, z_mid_freq, z_high_freq)
 
         return recon_low_freq, recon_mid_freq, recon_high_freq
-
-
-
-
-
-
-
 
 
 def test_dual_vae():
