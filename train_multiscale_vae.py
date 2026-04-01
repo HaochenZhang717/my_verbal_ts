@@ -390,3 +390,4 @@ if __name__ == "__main__":
         evaluate_and_plot(args, num_samples=args.num_plot_samples)
     else:
         train(args)
+        evaluate_and_plot(args, num_samples=args.num_plot_samples)

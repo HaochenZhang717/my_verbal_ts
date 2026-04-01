@@ -7,55 +7,6 @@ import torch
 import math
 
 
-class moving_avg(nn.Module):
-    """
-    Moving average block to highlight the trend of time series
-    """
-    def __init__(self, kernel_size, stride):
-        super(moving_avg, self).__init__()
-        self.kernel_size = kernel_size
-        self.avg = nn.AvgPool1d(kernel_size=kernel_size, stride=stride, padding=0)
-
-    def forward(self, x):
-        # x: [B, L, C]
-        front = x[:, 0:1, :].repeat(
-            1, self.kernel_size - 1 - math.floor((self.kernel_size - 1) // 2), 1
-        )
-        end = x[:, -1:, :].repeat(
-            1, math.floor((self.kernel_size - 1) // 2), 1
-        )
-        x = torch.cat([front, x, end], dim=1)
-        x = self.avg(x.permute(0, 2, 1))
-        x = x.permute(0, 2, 1)
-        return x
-
-
-# class series_decomp_multi(nn.Module):
-#     """
-#     Series decomposition block
-#     """
-#     def __init__(self, kernel_size):
-#         super(series_decomp_multi, self).__init__()
-#         self.moving_avg = nn.ModuleList([moving_avg(kernel, stride=1) for kernel in kernel_size])
-#         self.layer = nn.Linear(1, len(kernel_size))
-#
-#     def forward(self, x):
-#         # x: [B, L, C]
-#         moving_mean = []
-#         for func in self.moving_avg:
-#             ma = func(x)
-#             moving_mean.append(ma.unsqueeze(-1))  # [B, L, C, 1]
-#
-#         moving_mean = torch.cat(moving_mean, dim=-1)  # [B, L, C, K]
-#         weights = nn.Softmax(dim=-1)(self.layer(x.unsqueeze(-1)))  # [B, L, C, K]
-#         moving_mean = torch.sum(moving_mean * weights, dim=-1)  # [B, L, C]
-#         res = x - moving_mean
-#         return res, moving_mean
-
-
-
-import torch
-
 def fft_decompose_grouped(x, frequency_groups):
     """
     x: [B, T, C]
@@ -90,6 +41,29 @@ def fft_decompose_grouped(x, frequency_groups):
     components = torch.stack(components, dim=-1)  # [B, T, C, G]
 
     return components
+
+
+class moving_avg(nn.Module):
+    """
+    Moving average block to highlight the trend of time series
+    """
+    def __init__(self, kernel_size, stride):
+        super(moving_avg, self).__init__()
+        self.kernel_size = kernel_size
+        self.avg = nn.AvgPool1d(kernel_size=kernel_size, stride=stride, padding=0)
+
+    def forward(self, x):
+        # x: [B, L, C]
+        front = x[:, 0:1, :].repeat(
+            1, self.kernel_size - 1 - math.floor((self.kernel_size - 1) // 2), 1
+        )
+        end = x[:, -1:, :].repeat(
+            1, math.floor((self.kernel_size - 1) // 2), 1
+        )
+        x = torch.cat([front, x, end], dim=1)
+        x = self.avg(x.permute(0, 2, 1))
+        x = x.permute(0, 2, 1)
+        return x
 
 
 class NormAttention(nn.Module):
@@ -247,7 +221,7 @@ class series_decomp_multi(nn.Module):
 
 
         seasonal_weights = self.seasonal_attn(fft_feats.reshape(B, L, -1)).mean(1)
-        seasonal_weights = nn.Softmax(dim=-1)(self.seasonal_out(seasonal_weights))
+        seasonal_weights = nn.Sigmoid()(self.seasonal_out(seasonal_weights))
         seasonal = torch.sum(seasonal_weights[:,None,None,:] * fft_feats, dim=-1)
 
         high_frequency = res - seasonal
@@ -659,22 +633,5 @@ if __name__ == "__main__":
     test_dual_vae()
 
 
-
-
-
-
-
-
-
-
-
-
-
-    # text -> LongClip -> (seq_len, dim) -> (cross attention) -> nn.embedding(n_vars, 1, dim) and nn.embedding(1, n_scale, dim)
-
-
-    # condition.shape == (n_vars, n_scales, dim) -> diffusion as condition
-
-
-
+    ##scp -r haochenz@unites4.cs.unc.edu:/playpen-shared/haochenz/ckpts_multiscale/ETTh1/plots ../
 
