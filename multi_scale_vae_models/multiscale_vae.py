@@ -401,7 +401,7 @@ class DualVAE(nn.Module):
 
     def encode_to_posterior(self, inp):
         low_freq, mid_freq, high_freq, ze_low_freq, ze_mid_freq, ze_high_freq = self.encode_parts(inp)
-
+        breakpoint()
         mu_low_freq, logvar_low_freq = self.posterior_low_freq(low_freq)
         mu_mid_freq, logvar_mid_freq = self.posterior_mid_freq(mid_freq)
         mu_high_freq, logvar_high_freq = self.posterior_high_freq(high_freq)
