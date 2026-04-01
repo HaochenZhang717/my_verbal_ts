@@ -8,6 +8,9 @@ from tqdm import tqdm
 import wandb
 
 from multi_scale_vae_models.multiscale_vae import DualVAE   # ⚠️ 根据你的路径改
+import matplotlib.pyplot as plt
+import random
+
 
 
 # =========================
@@ -64,6 +67,9 @@ def get_args():
     # ===== wandb =====
     parser.add_argument("--wandb_project", type=str, default="multiscale_vae")
     parser.add_argument("--wandb_name", type=str, default="debug")
+
+    parser.add_argument("--eval_only", action="store_true")
+    parser.add_argument("--num_plot_samples", type=int, default=5)
 
     return parser.parse_args()
 
@@ -274,7 +280,103 @@ def train(args):
             print("Saved BEST")
 
 
+
+
+# =========================
+# Evaluate
+# =========================
+
+@torch.no_grad()
+def evaluate_and_plot(args, num_samples=5):
+
+    device = args.device if torch.cuda.is_available() else "cpu"
+
+    # ===== dataset =====
+    dataset = load_dataset(args.val_path)
+    loader = DataLoader(dataset, batch_size=1, shuffle=True)
+
+    sample = dataset[0][0]
+    T, C = sample.shape
+
+    # ===== model =====
+    model = DualVAE(
+        in_channels=C,
+        z_channels=args.z_channels,
+        latent_channels=args.latent_channels,
+        ch=args.ch,
+        dropout=args.dropout,
+        ch_mult=args.ch_mult,
+        decomposition_width=args.decomposition_width,
+        frequency_groups=args.frequency_groups,
+        moving_avg_kernel_sizes=args.moving_avg_kernel_sizes,
+    ).to(device)
+
+    ckpt_path = os.path.join(args.save_dir, "best.pt")
+    print(f"Loading model from {ckpt_path}")
+    model.load_state_dict(torch.load(ckpt_path, map_location=device))
+    model.eval()
+
+    # ===== iterate dataloader =====
+    for i, batch in enumerate(loader):
+
+        if i >= num_samples:
+            break
+
+        x = batch[0].to(device)  # [1, L, C]
+
+        out = model(x)
+
+        x_np = x.squeeze(0).cpu().numpy()
+
+        low = out["low_freq"].squeeze(0).cpu().numpy()
+        mid = out["mid_freq"].squeeze(0).cpu().numpy()
+        high = out["high_freq"].squeeze(0).cpu().numpy()
+
+        recon_low = out["recon_low_freq"].squeeze(0).cpu().numpy()
+        recon_mid = out["recon_mid_freq"].squeeze(0).cpu().numpy()
+        recon_high = out["recon_high_freq"].squeeze(0).cpu().numpy()
+        recon_total = out["total_recon"].squeeze(0).cpu().numpy()
+
+        # ===== plot =====
+        for c in range(min(C, 3)):
+
+            plt.figure(figsize=(12, 8))
+
+            # --- original ---
+            plt.subplot(4, 1, 1)
+            plt.plot(x_np[:, c])
+            plt.title(f"[Sample {i}] Channel {c} - Original")
+
+            # --- decomposition ---
+            plt.subplot(4, 1, 2)
+            plt.plot(low[:, c], label="low")
+            plt.plot(mid[:, c], label="mid")
+            plt.plot(high[:, c], label="high")
+            plt.legend()
+            plt.title("Decomposition")
+
+            # --- reconstruction components ---
+            plt.subplot(4, 1, 3)
+            plt.plot(recon_low[:, c], label="recon_low")
+            plt.plot(recon_mid[:, c], label="recon_mid")
+            plt.plot(recon_high[:, c], label="recon_high")
+            plt.legend()
+            plt.title("Reconstruction Components")
+
+            # --- total ---
+            plt.subplot(4, 1, 4)
+            plt.plot(x_np[:, c], label="gt")
+            plt.plot(recon_total[:, c], label="recon")
+            plt.legend()
+            plt.title("Total Reconstruction")
+
+            plt.tight_layout()
+            plt.show()
+
 # =========================
 if __name__ == "__main__":
     args = get_args()
-    train(args)
+    if args.eval_only:
+        evaluate_and_plot(args, num_samples=args.num_plot_samples)
+    else:
+        train(args)
