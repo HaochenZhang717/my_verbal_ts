@@ -36,9 +36,9 @@ python train_multiscale_vae.py \
     \
     --ch_mult 1 2 2 4 \
     \
-    --decomposition_width 64 \
+    --decomposition_width 128 \
     --frequency_groups 4 \
-    --moving_avg_kernel_sizes 5 7 \
+    --moving_avg_kernel_sizes 5 7 9 11 \
     \
     --lambda_recon_low 1.0 \
     --lambda_recon_mid 1.0 \

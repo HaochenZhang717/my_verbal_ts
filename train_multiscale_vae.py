@@ -210,7 +210,7 @@ def train(args):
     val_loader = DataLoader(val_dataset, batch_size=args.batch_size, shuffle=False)
 
     sample = train_dataset[0][0]
-    C, T = sample.shape
+    T, C = sample.shape
 
     # ===== model =====
     model = DualVAE(
