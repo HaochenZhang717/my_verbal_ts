@@ -432,7 +432,7 @@ class DualVAE(nn.Module):
         return z_low_freq, z_mid_freq, z_high_freq, recon_low_freq, recon_mid_freq, recon_high_freq, total_recon
 
     def forward(self, inp):
-
+        breakpoint()
         (low_freq, mid_freq, high_freq,
          ze_low_freq, ze_mid_freq, ze_high_freq,
          mu_low_freq, logvar_low_freq,
