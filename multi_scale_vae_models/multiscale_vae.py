@@ -2,7 +2,7 @@ import math
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from decomp_vae import Decoder, Encoder, GuidedDecoder, GuidedEncoder
+from multi_scale_vae_models.decomp_vae import Decoder, Encoder, GuidedDecoder, GuidedEncoder
 import torch
 import math
 
