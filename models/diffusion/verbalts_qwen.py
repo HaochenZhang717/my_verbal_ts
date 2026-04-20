@@ -114,11 +114,11 @@ def get_torch_trans(heads=8, layers=1, channels=64):
     return EncoderLayer(hidden_size=channels, num_heads=heads)
 
 
-# def get_torch_trans(heads=8, layers=1, channels=64):
-#     encoder_layer = nn.TransformerEncoderLayer(
-#         d_model=channels, nhead=heads, dim_feedforward=64, activation="gelu", batch_first=True
-#     )
-#     return nn.TransformerEncoder(encoder_layer, num_layers=layers)
+def get_torch_trans(heads=8, layers=1, channels=64):
+    encoder_layer = nn.TransformerEncoderLayer(
+        d_model=channels, nhead=heads, dim_feedforward=64, activation="gelu", batch_first=True
+    )
+    return nn.TransformerEncoder(encoder_layer, num_layers=layers)
 
 
 def get_torch_cross_trans(heads=8, layers=1, channels=64):

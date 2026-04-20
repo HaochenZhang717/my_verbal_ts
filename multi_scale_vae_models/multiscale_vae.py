@@ -169,64 +169,85 @@ class Permute(nn.Module):
         return x.permute(*self.dims)
 
 
+# class series_decomp_multi(nn.Module):
+#     """
+#     Series decomposition block
+#     """
+#     def __init__(self, kernel_size, frequency_groups, ts_dim, width):
+#         super(series_decomp_multi, self).__init__()
+#         self.moving_avg = nn.ModuleList([moving_avg(kernel, stride=1) for kernel in kernel_size])
+#         self.layer = nn.Linear(1, len(kernel_size))
+#
+#         self.moving_avg_attn = nn.Sequential(
+#             Permute(0,2,1),
+#             nn.Conv1d(in_channels=len(kernel_size)*ts_dim, out_channels=width//2, kernel_size=3, stride=1, padding=1),
+#             nn.SiLU(),
+#             nn.Conv1d(in_channels=width//2, out_channels=width, kernel_size=3, stride=1, padding=1),
+#             Permute(0,2,1),
+#             TransformerEncoderLayer(hidden_size=width, num_heads=width//16))
+#
+#         self.moving_avg_out = nn.Linear(width, len(kernel_size))
+#
+#         self.seasonal_attn = nn.Sequential(
+#             Permute(0,2,1),
+#             nn.Conv1d(in_channels=frequency_groups*ts_dim, out_channels=width//2, kernel_size=3, stride=1, padding=1),
+#             nn.SiLU(),
+#             nn.Conv1d(in_channels=width//2, out_channels=width, kernel_size=3, stride=1, padding=1),
+#             Permute(0,2,1),
+#             TransformerEncoderLayer(hidden_size=width, num_heads=4))
+#
+#         self.seasonal_out = nn.Linear(width, frequency_groups)
+#
+#         self.frequency_groups = frequency_groups
+#
+#     def forward(self, x):
+#         # x: [B, L, C]
+#         B, L, C = x.shape
+#         # first extract main global trend
+#         moving_mean = []
+#         for func in self.moving_avg:
+#             ma = func(x)
+#             moving_mean.append(ma.unsqueeze(-1))  # [B, L, C, 1]
+#
+#         moving_mean = torch.cat(moving_mean, dim=-1) # [B, L, C, K]
+#
+#         moving_mean_weights = self.moving_avg_attn(moving_mean.reshape(B, L, -1)).mean(1)
+#         moving_mean_weights = nn.Softmax(dim=-1)(self.moving_avg_out(moving_mean_weights))
+#         moving_mean = torch.sum(moving_mean * moving_mean_weights[:,None,None,:], dim=-1)  # [B, L, C]
+#         res = x - moving_mean
+#
+#         # Then we extract some seasonal trend
+#         fft_feats = fft_decompose_grouped(res, self.frequency_groups)
+#
+#
+#         seasonal_weights = self.seasonal_attn(fft_feats.reshape(B, L, -1)).mean(1)
+#         seasonal_weights = nn.Sigmoid()(self.seasonal_out(seasonal_weights))
+#         seasonal = torch.sum(seasonal_weights[:,None,None,:] * fft_feats, dim=-1)
+#
+#         high_frequency = res - seasonal
+#
+#         return moving_mean, seasonal, high_frequency
+
+
+
 class series_decomp_multi(nn.Module):
     """
     Series decomposition block
     """
-    def __init__(self, kernel_size, frequency_groups, ts_dim, width):
+    def __init__(self):
         super(series_decomp_multi, self).__init__()
-        self.moving_avg = nn.ModuleList([moving_avg(kernel, stride=1) for kernel in kernel_size])
-        self.layer = nn.Linear(1, len(kernel_size))
-
-        self.moving_avg_attn = nn.Sequential(
-            Permute(0,2,1),
-            nn.Conv1d(in_channels=len(kernel_size)*ts_dim, out_channels=width//2, kernel_size=3, stride=1, padding=1),
-            nn.SiLU(),
-            nn.Conv1d(in_channels=width//2, out_channels=width, kernel_size=3, stride=1, padding=1),
-            Permute(0,2,1),
-            TransformerEncoderLayer(hidden_size=width, num_heads=width//16))
-
-        self.moving_avg_out = nn.Linear(width, len(kernel_size))
-
-        self.seasonal_attn = nn.Sequential(
-            Permute(0,2,1),
-            nn.Conv1d(in_channels=frequency_groups*ts_dim, out_channels=width//2, kernel_size=3, stride=1, padding=1),
-            nn.SiLU(),
-            nn.Conv1d(in_channels=width//2, out_channels=width, kernel_size=3, stride=1, padding=1),
-            Permute(0,2,1),
-            TransformerEncoderLayer(hidden_size=width, num_heads=4))
-
-        self.seasonal_out = nn.Linear(width, frequency_groups)
-
-        self.frequency_groups = frequency_groups
+        self.moving_avg = moving_avg(5, stride=1)
+        self.downsample = nn.AvgPool1d(kernel_size=2, stride=2)
+        self.upsample = nn.Upsample(scale_factor=2, mode='linear', align_corners=False)
 
     def forward(self, x):
-        # x: [B, L, C]
-        B, L, C = x.shape
-        # first extract main global trend
-        moving_mean = []
-        for func in self.moving_avg:
-            ma = func(x)
-            moving_mean.append(ma.unsqueeze(-1))  # [B, L, C, 1]
+        trend = self.moving_avg(x)
+        seasonal = x - trend
+        coarse_seasonal_down = self.downsample(seasonal.transpose(1, 2))
+        coarse_seasonal = self.upsample(coarse_seasonal_down).transpose(1, 2)
 
-        moving_mean = torch.cat(moving_mean, dim=-1) # [B, L, C, K]
+        return trend, coarse_seasonal, seasonal
 
-        moving_mean_weights = self.moving_avg_attn(moving_mean.reshape(B, L, -1)).mean(1)
-        moving_mean_weights = nn.Softmax(dim=-1)(self.moving_avg_out(moving_mean_weights))
-        moving_mean = torch.sum(moving_mean * moving_mean_weights[:,None,None,:], dim=-1)  # [B, L, C]
-        res = x - moving_mean
-
-        # Then we extract some seasonal trend
-        fft_feats = fft_decompose_grouped(res, self.frequency_groups)
-
-
-        seasonal_weights = self.seasonal_attn(fft_feats.reshape(B, L, -1)).mean(1)
-        seasonal_weights = nn.Sigmoid()(self.seasonal_out(seasonal_weights))
-        seasonal = torch.sum(seasonal_weights[:,None,None,:] * fft_feats, dim=-1)
-
-        high_frequency = res - seasonal
-
-        return moving_mean, seasonal, high_frequency
 
 
 class SymmetricFusion(nn.Module):

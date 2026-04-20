@@ -432,6 +432,7 @@ class GuidedEncoder(nn.Module):
         # Output shape: [B, z_channels*2, L//downsample_ratio]
         return h
 
+
 class GuidedDecoder(nn.Module):
     def __init__(
         self, *,

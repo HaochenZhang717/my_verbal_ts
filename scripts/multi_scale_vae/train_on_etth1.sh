@@ -22,7 +22,7 @@ WANDB_NAME="ETTh1"
 # Training params
 # =========================
 BATCH_SIZE=64
-EPOCHS=100
+EPOCHS=1000
 LR=1e-4
 
 # =========================
@@ -89,7 +89,7 @@ COMMON_ARGS="\
 # =========================
 echo "🚀 Starting training..."
 python train_multiscale_vae.py ${COMMON_ARGS}
-
+don
 # =========================
 # Eval
 # =========================
