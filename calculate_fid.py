@@ -130,7 +130,7 @@ def load_dataset(dict_path, dict_key, idx=-1):
     if data.shape[1] > data.shape[2]:
         data = data.permute(0,2,1)
 
-    print(f"data max: {data.max().item()}, data min: {data.min().item()}")
+    # print(f"data max: {data.max().item()}, data min: {data.min().item()}")
     # print(f"Loaded {dict_path}, key: {dict_key}: {data.shape}")
     return TensorDataset(data.float())
 
