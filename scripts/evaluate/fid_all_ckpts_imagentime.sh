@@ -40,7 +40,7 @@ do
         --num_layers 2 \
         --num_heads 8 \
         --latent_dim 64 \
-        --num_samples 2850 \
+        --num_samples 4000 \
         --save_path "tmp.txt"
     )
 

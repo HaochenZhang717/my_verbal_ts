@@ -18,6 +18,7 @@ def save_configs(configs, path):
     with open(path, "w") as f:
         yaml.dump(configs, f, yaml.SafeDumper)
 
+
 def train(training_stage, train_configs, model_diff_configs, model_cond_configs, eval_configs,  output_folder):
     train_configs["train"]["output_folder"] = output_folder
 
