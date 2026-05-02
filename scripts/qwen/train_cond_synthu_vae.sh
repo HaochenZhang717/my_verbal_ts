@@ -21,7 +21,7 @@ do
     export WANDB_NAME="qwen_v1_vae_synth_u_cosine-lr${LR}_bs${BS}-L${LAYERS}C${CHANNELS}H${NHEADS}D${DIFFUSION_EMBEDDING_DIM}-dropout0.1"
 
     CUDA_VISIBLE_DEVICES=0 python run_qwen.py \
-        --cond_modal vae \
+        --cond_modal vae_embed \
         --training_stage finetune \
         --save_folder ./sweep/synth_u_qwen_vae/lr_${LR}_bs_${BS}-L${LAYERS}C${CHANNELS}H${NHEADS}D${DIFFUSION_EMBEDDING_DIM}-dropout0.1 \
         --model_diff_config_path configs/synth_u_qwen/diff/model_text2ts_dep.yaml \
