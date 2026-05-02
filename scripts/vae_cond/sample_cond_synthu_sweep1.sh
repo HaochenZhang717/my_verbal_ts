@@ -10,7 +10,7 @@ CHANNELS=128
 NHEADS=8
 DIFFUSION_EMBEDDING_DIM=128
 
-CKPT_DIR="/playpen/haochenz/my_verbal_ts/sweep/synth_u/vae_cond/0/ckpts"
+CKPT_DIR="/playpen-shared/haochenz/my_verbal_ts/sweep/synth_u/vae_cond/0/ckpts"
 
 
 for ckpt_path in ${CKPT_DIR}/model_*.pth
