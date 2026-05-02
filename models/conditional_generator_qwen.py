@@ -62,7 +62,7 @@ class ConditionalGeneratorQwen(nn.Module):
         B, C, T = x.shape
         # print(f"moment_embed.shape = {moment_embeds.shape}")
         # print(f"vae_embed.shape = {vae_embeds.shape}")
-
+        breakpoint()
         if self.cond_configs["cond_modal"] == "text":
             attr_embed_raw = text_embedding_all_segments
         elif self.cond_configs["cond_modal"] == "vae_embed":
@@ -119,7 +119,6 @@ class ConditionalGeneratorQwen(nn.Module):
         B, C, T = ts.shape
         # print("ts.shape in _unpack_data_cond_gen", ts.shape)
         tp = torch.arange(T).repeat(B, 1).to(self.device).float()
-        breakpoint()
         text_embedding_all_segments = batch["text_embedding_all_segments"].to(self.device).float()
         vae_embeds = batch["vae_embeds"].to(self.device).float() if batch["vae_embeds"] is not None else None
         moment_embeds = batch["moment_embed"].to(self.device).float() if batch["moment_embed"] is not None else None
