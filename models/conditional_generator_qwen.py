@@ -62,7 +62,7 @@ class ConditionalGeneratorQwen(nn.Module):
         B, C, T = x.shape
         # print(f"moment_embed.shape = {moment_embeds.shape}")
         # print(f"vae_embed.shape = {vae_embeds.shape}")
-        breakpoint()
+
         if self.cond_configs["cond_modal"] == "text":
             attr_embed_raw = text_embedding_all_segments
         elif self.cond_configs["cond_modal"] == "vae_embed":
