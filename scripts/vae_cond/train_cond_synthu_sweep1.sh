@@ -58,7 +58,7 @@ do
     CUDA_VISIBLE_DEVICES=4 python run_vae_cond.py \
         --cond_modal vae_embed \
         --training_stage finetune \
-        --save_folder ./sweep/synth_u/vae_cond \
+        --save_folder ./sweep/synth_u/vae_cond_0502 \
         --model_diff_config_path configs/synth_u_vae_cond/diff/model_text2ts_dep.yaml \
         --model_cond_config_path configs/synth_u_vae_cond/cond/text_msmdiffmv.yaml \
         --train_config_path configs/synth_u_vae_cond/train.yaml \
