@@ -23,7 +23,7 @@ do
     CUDA_VISIBLE_DEVICES=0 python run_qwen.py \
         --cond_modal vae_embed \
         --training_stage finetune \
-        --save_folder ./sweep/synth_u_qwen_vae/lr_${LR}_bs_${BS}-L${LAYERS}C${CHANNELS}H${NHEADS}D${DIFFUSION_EMBEDDING_DIM}-dropout0.1 \
+        --save_folder ./sweep/synth_u_qwen_vae_0502/lr_${LR}_bs_${BS}-L${LAYERS}C${CHANNELS}H${NHEADS}D${DIFFUSION_EMBEDDING_DIM}-dropout0.1 \
         --model_diff_config_path configs/synth_u_qwen/diff/model_text2ts_dep.yaml \
         --model_cond_config_path configs/synth_u_qwen/cond/text_msmdiffmv.yaml \
         --train_config_path configs/synth_u_qwen/train.yaml \
