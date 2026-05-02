@@ -3,7 +3,7 @@ export SCHEDULER=cosine
 
 
 LR_LIST=(1e-3)
-BS_LIST=(128)
+BS_LIST=(1000)
 
 LAYERS=10
 CHANNELS=128
